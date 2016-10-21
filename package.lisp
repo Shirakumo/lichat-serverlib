@@ -14,6 +14,8 @@
    #:users
    #:profiles
    #:channels
+   #:connection
+   #:server
    #:coerce-username
    #:coerce-channelname
    #:find-user
@@ -27,4 +29,6 @@
    #:leave
    #:send!
    #:send
-   #:process))
+   #:process
+   #:init-connection
+   #:teardown-connection))

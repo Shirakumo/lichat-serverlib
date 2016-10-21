@@ -6,25 +6,23 @@
 
 (in-package #:org.shirakumo.lichat.server)
 
-(defvar *server*)
-(defvar *stream*)
-
-(defclass server ()
-  ((hostname :initarg :hostname :accessor hostname)
-   (users :initform (make-hash-table :test 'equal) :accessor users)
+(defclass server (lichat-protocol:user)
+  ((users :initform (make-hash-table :test 'equal) :accessor users)
    (profiles :initform (make-hash-table :test 'equal) :accessor profiles)
-   (channels :initform (make-hash-table :Test 'equal) :accessor channels)
+   (channels :initform (make-hash-table :test 'equal) :accessor channels)
    (salt :initarg :salt :accessor salt))
   (:default-initargs
    :salt ""))
 
-(defmethod initialize-instance :after ((server server) &key hostname)
-  (check-type hostname lichat-protocol:username)
-  (setf (find-channel hostname server)
-        (make-channel hostname hostname server))
-  (setf (find-user hostname server)
-        (make-instance 'lichat-protocol:user :name hostname))
-  (join (find-channel hostname server) (find-user hostname server)))
+(defclass connection (lichat-protocol:connection)
+  ((server :initarg :server :accessor server)))
+
+(defmethod initialize-instance :after ((server server) &key name)
+  (check-type name lichat-protocol:username)
+  (setf (find-channel name server)
+        (make-channel name name server))
+  (setf (find-user name server) server)
+  (join (find-channel name server) server))
 
 (defun coerce-username (name-ish)
   (etypecase name-ish
@@ -76,7 +74,7 @@
                         :name (format NIL "@~a" (lichat-protocol:next-id))
                         :permissions (prep-perms registrant lichat-protocol:*default-anonymous-channel-permissions*)
                         :lifetime 0))
-        ((string= name (hostname server))
+        ((string= name (lichat-protocol:name server))
          (make-instance 'lichat-protocol:channel
                         :name name
                         :permissions (prep-perms registrant lichat-protocol:*default-primary-channel-permissions*)
@@ -105,17 +103,23 @@
   (setf (lichat-protocol:users channel) (remove user (lichat-protocol:users channel)))
   (setf (lichat-protocol:channels user) (remove channel (lichat-protocol:channels user))))
 
+(define-condition failure-condition (error)
+  ((failure-type :initarg :type :reader failure-type)
+   (failure-args :initarg :args :reader failure-args))
+  (:report (lambda (c s) (format s "Failure: (~a ~{~s~^ ~})"
+                                 (failure-type c) (failure-args c)))))
+
+(defun fail! (type-ish &rest initargs)
+  (error 'failure-condition :type type-ish :args initargs))
+
 (defun send! (target type-ish &rest initargs)
   (unless (getf initargs :from)
-    (push (lichat-protocol:name *server*) initargs)
+    (push "STUB!" initargs)
     (push :from initargs))
   (send (apply #'make-instance
                (find-symbol (symbol-name type-ish) :lichat-protocol)
                initargs)
         target))
-
-(defmethod send ((object lichat-protocol:wire-object) (connection lichat-protocol:connection))
-  (lichat-protocol:to-wire object *stream*))
 
 (defmethod send ((object lichat-protocol:wire-object) (channel lichat-protocol:channel))
   (dolist (user (lichat-protocol:users channel))
@@ -125,9 +129,8 @@
   (dolist (connection (lichat-protocol:connections user))
     (send object connection)))
 
-(defmethod process ((connection lichat-protocol:connection) (stream stream))
-  (let ((*stream* stream)
-        (message))
+(defmethod process ((connection connection) (stream stream))
+  (let ((message))
     (handler-case
         (setf message (lichat-protocol:from-wire stream))
       (error (err)
@@ -135,72 +138,74 @@
                :text (princ-to-string err))))
     (handler-case
         (process connection message)
-      (failure (err)
-        (process connection err))
+      (failure-condition (err)
+        (apply #'send! connection (failure-type err) (failure-args err)))
       (error (err)
         (send! connection 'failure :text (format NIL "Internal error: ~a" err))))
     message))
 
-(defmethod process ((connection lichat-protocol:connection) (update lichat-protocol:connect))
-  (cond ((string/= (lichat-protocol:version update)
-                   (lichat-protocol:protocol-version))
-         (error 'lichat-protocol:incompatible-version
-                :from (lichat-protocol:name *server*)
-                :update-id (lichat-protocol:id update)
-                :compatible-versions (list (lichat-protocol:protocol-version))
-                :text (format NIL "~a is not supported." (lichat-protocol:version update))))
-        ((lichat-protocol:password update)
-         (let ((profile (find-profile update)))
-           (cond ((not profile)
-                  (error 'lichat-protocol:no-such-profile
-                         :from (lichat-protocol:name *server*)
-                         :update-id (lichat-protocol:id update)
-                         :text (format NIL "~a is not registered." (lichat-protocol:from update))))
-                 ((string/= (cryptos:pbkdf2-hash (lichat-protocol:password update)
-                                                 (salt *server*))
-                            (lichat-protocol:password profile))
-                  (error 'lichat-protocol:invalid-password
-                         :from (lichat-protocol:name *server*)
-                         :update-id (lichat-protocol:id update)
-                         :text (format NIL "Your password is wrong.")))
-                 (T
-                  (init-connection connection (lichat-protocol:from update))))))
-        ((find-user update)
-         (error 'lichat-protocol:username-taken
-                :from (lichat-protocol:name *server*)
-                :update-id (lichat-protocol:id update)
-                :text (format NIL "The name ~s is already in use." (lichat-protocol:from update))))
-        ((find-profile update)
-         (error 'lichat-protocol:username-taken
-                :from (lichat-protocol:name *server*)
-                :update-id (lichat-protocol:id update)
-                :text (format NIL "The name ~s is registered." (lichat-protocol:from update)))
-         (T
-          (init-connection connection (lichat-protocol:from update))))))
+(defmethod process ((connection connection) (update lichat-protocol:connect))
+  (let ((server (server connection)))
+    (cond ((string/= (lichat-protocol:version update)
+                     (lichat-protocol:protocol-version))
+           (fail! 'lichat-protocol:incompatible-version
+                  :update-id (lichat-protocol:id update)
+                  :compatible-versions (list (lichat-protocol:protocol-version))
+                  :text (format NIL "~a is not supported." (lichat-protocol:version update))))
+          ((lichat-protocol:password update)
+           (let ((profile (find-profile update server)))
+             (cond ((not profile)
+                    (fail! 'lichat-protocol:no-such-profile
+                           :update-id (lichat-protocol:id update)
+                           :text (format NIL "~a is not registered." (lichat-protocol:from update))))
+                   ((string/= (cryptos:pbkdf2-hash (lichat-protocol:password update)
+                                                   (salt server))
+                              (lichat-protocol:password profile))
+                    (fail! 'lichat-protocol:invalid-password
+                           :update-id (lichat-protocol:id update)
+                           :text (format NIL "Your password is wrong.")))
+                   (T
+                    (init-connection connection (lichat-protocol:from update))))))
+          ((find-user update server)
+           (fail! 'lichat-protocol:username-taken
+                  :update-id (lichat-protocol:id update)
+                  :text (format NIL "The name ~s is already in use." (lichat-protocol:from update))))
+          ((find-profile update server)
+           (fail! 'lichat-protocol:username-taken
+                  :update-id (lichat-protocol:id update)
+                  :text (format NIL "The name ~s is registered." (lichat-protocol:from update))))
+          (T
+           (init-connection connection (lichat-protocol:from update))))))
 
-(defmethod init-connection ((connection lichat-protocol:connection) username)
-  (let ((user (find-user username)))
+(defmethod init-connection ((connection connection) username)
+  (let* ((server (server connection))
+         (user (find-user username server)))
     (cond (user
-           (setf (lichat-protocol:user connection) user))
+           (setf (lichat-protocol:user connection) user)
+           (dolist (channel (channels user))
+             (send! connection 'join :from (lichat-protocol:name user)
+                                     :channel (lichat-protocol:name channel))))
           (T
            (setf user (make-instance 'lichat-protocol:user :name username))
-           (setf (find-user username) user)
-           (send! (find-channel (lichat-protocol:name *server*)) 'join
-                  :from username :channel (lichat-protocol:name *server*))))
+           (setf (find-user username server) user)
+           (join (find-channel (lichat-protocol:name server) server) user)))
     (push connection (lichat-protocol:connections user))
     (send! connection 'connect
            :version (lichat-protocol:protocol-version))
     connection))
 
-(defmethod process ((connection lichat-protocol:connection) (update lichat-protocol:disconnect))
+(defmethod teardown-connection ((connection connection))
   (let ((user (lichat-protocol:user connection)))
     (setf (lichat-protocol:connections user)
           (remove connection (lichat-protocol:connections user)))
     (unless (lichat-protocol:connections user)
-      (remove-user user *server*)
+      (remove-user user (server connection))
       (dolist (channel (lichat-protocol:channels user))
-        (leave channel user)))
-    (send! connection 'disconnect)))
+        (leave channel user)))))
+
+(defmethod process ((connection connection) (update lichat-protocol:disconnect))
+  (teardown-connection connection)
+  (send! connection 'disconnect))
 
 ;;; FIXME FOR INVALID FROM FIELDS.
 ;; the protocol has FROM fields in order to both
@@ -210,9 +215,9 @@
 ;; treated in the processing functions, which it
 ;; currently is not.
 
-(defmethod process ((connection lichat-protocol:connection) (update lichat-protocol:message))
-  (let ((user (find-user (lichat-protocol:from update) *server*))
-        (channel (find-channel (lichat-protocol:channel update) *server*)))
+(defmethod process ((connection connection) (update lichat-protocol:message))
+  (let ((user (find-user (lichat-protocol:from update) (server connection)))
+        (channel (find-channel (lichat-protocol:channel update) (server connection))))
     (unless channel
       (error "No such channel."))
     (unless (find channel (lichat-protocol:channels user))
@@ -220,16 +225,16 @@
     ;; FIXME: Check FROM
     (send update channel)))
 
-(defmethod process ((connection lichat-protocol:connection) (update lichat-protocol:join))
-  (let ((user (find-user (lichat-protocol:from update) *server*))
-        (channel (find-channel (lichat-protocol:channel update) *server*)))
+(defmethod process ((connection connection) (update lichat-protocol:join))
+  (let ((user (find-user (lichat-protocol:from update) (server connection)))
+        (channel (find-channel (lichat-protocol:channel update) (server connection))))
     (join channel user)))
 
-(defmethod process ((connection lichat-protocol:connection) (update lichat-protocol:leave))
-  (let ((user (find-user (lichat-protocol:from update) *server*))
-        (channel (find-channel (lichat-protocol:channel update) *server*)))
+(defmethod process ((connection connection) (update lichat-protocol:leave))
+  (let ((user (find-user (lichat-protocol:from update) (server connection)))
+        (channel (find-channel (lichat-protocol:channel update) (server connection))))
     (leave channel user)))
 
-(defmethod process ((connection lichat-protocol:connection) (ping lichat-protocol:ping))
+(defmethod process ((connection connection) (ping lichat-protocol:ping))
   ;; Do something with the timing.
-  (send! connection 'pong))
+  (send (make-instance 'lichat-protocol:pong :clock (get-universal-time)) connection))
