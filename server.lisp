@@ -19,21 +19,24 @@
 
 (defmethod initialize-instance :after ((server server) &key name)
   (check-type name lichat-protocol:username)
-  (setf (find-channel name server)
-        (make-channel name name server))
   (setf (find-user name server) server)
+  (create name name server)
   (join (find-channel name server) server))
 
 (defun coerce-username (name-ish)
   (etypecase name-ish
     (lichat-protocol:update
      (string-downcase (lichat-protocol:from name-ish)))
+    (lichat-protocol:user
+     (string-downcase (lichat-protocol:name name-ish)))
     (string (string-downcase name-ish))))
 
 (defun coerce-channelname (name-ish)
   (etypecase name-ish
     (lichat-protocol:channel-update
      (string-downcase (lichat-protocol:channel name-ish)))
+    (lichat-protocol:channel
+     (string-downcase (lichat-protocol:name name-ish)))
     (string (string-downcase name-ish))))
 
 (defmethod find-user (name server)
@@ -66,26 +69,34 @@
 (defun prep-perms (registrant perms)
   (sublis `((:registrant . ,registrant)) perms))
 
-(defmethod make-channel (registrant name server)
-  (cond ((find-channel name server)
-         (error "A channel with that name already exists."))
-        ((or (not name) (string= name ""))
-         (make-instance 'lichat-protocol:channel
-                        :name (format NIL "@~a" (lichat-protocol:next-id))
-                        :permissions (prep-perms registrant lichat-protocol:*default-anonymous-channel-permissions*)
-                        :lifetime 0))
-        ((string= name (lichat-protocol:name server))
-         (make-instance 'lichat-protocol:channel
-                        :name name
-                        :permissions (prep-perms registrant lichat-protocol:*default-primary-channel-permissions*)
-                        :lifetime most-positive-fixnum))
-        ((typep name 'lichat-protocol:channelname)
-         (make-instance 'lichat-protocol:channel
-                        :name name
-                        :permissions (prep-perms registrant lichat-protocol:*default-regular-channel-permissions*)
-                        :lifetime lichat-protocol:*default-channel-lifetime*))
-        (T
-         (error "Invalid channel name ~s" name))))
+(defun permitted (action channel user)
+  (let ((entry (find action (lichat-protocol:permissions channel))))
+    (when entry
+      (or (eql T (second action))
+          (find (lichat-protocol:name user) (second action) :test #'string-equal)))))
+
+(defmethod create (registrant name server)
+  (let ((username (lichat-protocol:name (find-user registrant server))))
+    (setf (find-channel name server)
+          (cond ((find-channel name server)
+                 (error "A channel with that name already exists."))
+                ((or (not name) (string= name ""))
+                 (make-instance 'lichat-protocol:channel
+                                :name (format NIL "@~a" (lichat-protocol:next-id))
+                                :permissions (prep-perms username lichat-protocol:*default-anonymous-channel-permissions*)
+                                :lifetime 0))
+                ((string= name (lichat-protocol:name server))
+                 (make-instance 'lichat-protocol:channel
+                                :name name
+                                :permissions (prep-perms username lichat-protocol:*default-primary-channel-permissions*)
+                                :lifetime most-positive-fixnum))
+                ((typep name 'lichat-protocol:channelname)
+                 (make-instance 'lichat-protocol:channel
+                                :name name
+                                :permissions (prep-perms username lichat-protocol:*default-regular-channel-permissions*)
+                                :lifetime lichat-protocol:*default-channel-lifetime*))
+                (T
+                 (error "Invalid channel name ~s" name))))))
 
 (defmethod join ((channel lichat-protocol:channel) (user lichat-protocol:user))
   (when (find channel (lichat-protocol:channels user))
@@ -112,14 +123,14 @@
 (defun fail! (type-ish &rest initargs)
   (error 'failure-condition :type type-ish :args initargs))
 
-(defun send! (target type-ish &rest initargs)
+(defun send! (connection type-ish &rest initargs)
   (unless (getf initargs :from)
-    (push "STUB!" initargs)
+    (push (lichat-protocol:name (server connection)) initargs)
     (push :from initargs))
   (send (apply #'make-instance
                (find-symbol (symbol-name type-ish) :lichat-protocol)
                initargs)
-        target))
+        connection))
 
 (defmethod send ((object lichat-protocol:wire-object) (channel lichat-protocol:channel))
   (dolist (user (lichat-protocol:users channel))
@@ -133,7 +144,7 @@
   (let ((message))
     (handler-case
         (setf message (lichat-protocol:from-wire stream))
-      (lichat-protocol:reader-condition (err)
+      (lichat-protocol:wire-condition (err)
         (send! connection 'malformed-update
                :text (princ-to-string err))))
     (when (typep message 'lichat-protocol:wire-object)
@@ -142,8 +153,18 @@
         (failure-condition (err)
           (apply #'send! connection (failure-type err) (failure-args err)))
         (lichat-protocol:protocol-condition (err)
-          (send! connection 'failure :text (format NIL "Internal error: ~a" err)))))
+          (send! connection 'failure
+                 :text (format NIL "Internal error: ~a" err)))))
     message))
+
+(defmethod process :around ((connection connection) (update lichat-protocol:update))
+  (restart-case
+      (call-next-method)
+    (continue ()
+      :report "Respond with a failure and return."
+      (send! connection 'update-failure
+             :update-id (lichat-protocol:id update)
+             :text (format NIL "Internal error; update flushed.")))))
 
 (defmethod process ((connection connection) (update lichat-protocol:connect))
   (let ((server (server connection)))
@@ -189,6 +210,7 @@
           (T
            (setf user (make-instance 'lichat-protocol:user :name username))
            (setf (find-user username server) user)
+           (setf (lichat-protocol:user connection) user)
            (join (find-channel (lichat-protocol:name server) server) user)))
     (push connection (lichat-protocol:connections user))
     (send! connection 'connect
@@ -236,6 +258,25 @@
         (channel (find-channel (lichat-protocol:channel update) (server connection))))
     (leave channel user)))
 
-(defmethod process ((connection connection) (ping lichat-protocol:ping))
+(defmethod process ((connection connection) (update lichat-protocol:ping))
   ;; Do something with the timing.
-  (send (make-instance 'lichat-protocol:pong :clock (get-universal-time)) connection))
+  (send! connection 'pong
+         :id (lichat-protocol:id update)))
+
+(defmethod process ((connection connection) (update lichat-protocol:channels))
+  (send! connection 'channels
+         :channels (loop for k being the hash-keys of (channels (server connection))
+                         collect k)))
+
+(defmethod process ((connection connection) (update lichat-protocol:users))
+  (let ((channel (find-channel (lichat-protocol:channel update) (server connection))))
+    (send! connection 'users
+           :channel (lichat-protocol:name channel)
+           :users (lichat-protocol:users (lichat-protocol:users channel)))))
+
+(defmethod process ((connection connection) (update lichat-protocol:create))
+  (let ((user (find-user (lichat-protocol:from update) (server connection))))
+    (join (create user
+                  (lichat-protocol:channel update)
+                  (server connection))
+          user)))
