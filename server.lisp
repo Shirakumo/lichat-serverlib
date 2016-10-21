@@ -64,7 +64,7 @@
   (remhash (coerce-channelname name) (channels server)))
 
 (defun prep-perms (registrant perms)
-  (sublis `((registrant . ,registrant)) perms))
+  (sublis `((:registrant . ,registrant)) perms))
 
 (defmethod make-channel (registrant name server)
   (cond ((find-channel name server)
