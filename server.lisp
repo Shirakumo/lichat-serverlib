@@ -19,7 +19,7 @@
    :salt ""))
 
 (defmethod initialize-instance :after ((server server) &key hostname)
-  (check-type hostname 'lichat-protocol:username)
+  (check-type hostname lichat-protocol:username)
   (setf (find-channel hostname server)
         (make-channel hostname hostname server))
   (setf (find-user hostname server)
@@ -98,7 +98,7 @@
                        :channel (lichat-protocol:name channel)))
 
 (defmethod leave ((channel lichat-protocol:channel) (user lichat-protocol:user))
-  (unless (find channek (lichat-protocol:channels user))
+  (unless (find channel (lichat-protocol:channels user))
     (error "Not in channel."))
   (send! channel 'leave :from (lichat-protocol:name user)
                         :channel (lichat-protocol:name channel))
@@ -136,7 +136,7 @@
     (handler-case
         (process connection message)
       (failure (err)
-        (process connection failure))
+        (process connection err))
       (error (err)
         (send! connection 'failure :text (format NIL "Internal error: ~a" err))))
     message))
