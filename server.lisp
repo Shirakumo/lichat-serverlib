@@ -133,15 +133,16 @@
   (let ((message))
     (handler-case
         (setf message (lichat-protocol:from-wire stream))
-      (error (err)
+      (lichat-protocol:reader-condition (err)
         (send! connection 'malformed-update
                :text (princ-to-string err))))
-    (handler-case
-        (process connection message)
-      (failure-condition (err)
-        (apply #'send! connection (failure-type err) (failure-args err)))
-      (error (err)
-        (send! connection 'failure :text (format NIL "Internal error: ~a" err))))
+    (when (typep message 'lichat-protocol:wire-object)
+      (handler-case
+          (process connection message)
+        (failure-condition (err)
+          (apply #'send! connection (failure-type err) (failure-args err)))
+        (lichat-protocol:protocol-condition (err)
+          (send! connection 'failure :text (format NIL "Internal error: ~a" err)))))
     message))
 
 (defmethod process ((connection connection) (update lichat-protocol:connect))
