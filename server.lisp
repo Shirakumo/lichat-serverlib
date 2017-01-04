@@ -61,36 +61,36 @@
      (string-downcase (lichat-protocol:name name-ish)))
     (string (string-downcase name-ish))))
 
-(defmethod find-user (name server)
+(defmethod find-user (name (server server))
   (gethash (coerce-username name) (users server)))
 
-(defmethod (setf find-user) (user name server)
+(defmethod (setf find-user) (user name (server server))
   (setf (gethash (coerce-username name) (users server)) user))
 
-(defmethod remove-user (name server)
+(defmethod remove-user (name (server server))
   (remhash (coerce-username name) (users server)))
 
-(defmethod find-profile (name server)
+(defmethod find-profile (name (server server))
   ;; FIXME: Check timeout, remove if done
   (gethash (coerce-username name) (profiles server)))
 
-(defmethod (setf find-profile) (profile name server)
+(defmethod (setf find-profile) (profile name (server server))
   (setf (gethash (coerce-username name) (profiles server)) profile))
 
-(defmethod remove-profile (name server)
+(defmethod remove-profile (name (server server))
   (remhash (coerce-username name) (profiles server)))
 
-(defmethod find-channel (name server)
+(defmethod find-channel (name (server server))
   (cond ((eql name T)
          (find-channel (lichat-protocol:name server) server))
         (T
          ;; FIXME: Check timeout, remove if done
          (gethash (coerce-channelname name) (channels server)))))
 
-(defmethod (setf find-channel) (channel name server)
+(defmethod (setf find-channel) (channel name (server server))
   (setf (gethash (coerce-channelname name) (channels server)) channel))
 
-(defmethod remove-channel (name server)
+(defmethod remove-channel (name (server server))
   (remhash (coerce-channelname name) (channels server)))
 
 (defun prep-perms (registrant perms)
@@ -242,7 +242,7 @@
                          :update-id (lichat-protocol:id update)
                          :text (format NIL "Your password is wrong.")))
                  (T
-                  (init-connection connection (lichat-protocol:from update))))))
+                  (init-connection connection update)))))
         ((find-user update)
          (fail! 'lichat-protocol:username-taken
                 :update-id (lichat-protocol:id update)
@@ -252,12 +252,12 @@
                 :update-id (lichat-protocol:id update)
                 :text (format NIL "The name ~s is registered." (lichat-protocol:from update))))
         (T
-         (init-connection connection (lichat-protocol:from update)))))
+         (init-connection connection update))))
 
-(defmethod init-connection ((connection connection) username)
-  (let* ((server (server connection))
-         (user (find-user username server))
-         (profile (find-profile user server)))
+(defmethod init-connection ((connection connection) update)
+  (let* ((username (lichat-protocol:from update))
+         (server (server connection))
+         (user (find-user username server)))
     (cond (user
            (setf (lichat-protocol:user connection) user)
            (dolist (channel (channels user))
@@ -269,9 +269,10 @@
            (setf (lichat-protocol:user connection) user)
            (join (find-channel (lichat-protocol:name server) server) user)))
     (push connection (lichat-protocol:connections user))
-    (when profile
-      (reset-timeout profile))
+    (when (find-profile user server)
+      (reset-timeout (find-profile user server)))
     (send! connection 'connect
+           :id (lichat-protocol:id update)
            :version (lichat-protocol:protocol-version))
     connection))
 
@@ -284,7 +285,8 @@
         (remove-user user (server connection))
         (dolist (channel (lichat-protocol:channels user))
           (leave channel user))
-        (start-timeout (find-profile (lichat-protocol:name user) (server connection)))))))
+        (let ((profile (find-profile (lichat-protocol:name user) (server connection))))
+          (when profile (start-timeout profile)))))))
 
 (define-update-handler disconnect (connection update)
   (teardown-connection connection)
@@ -299,19 +301,19 @@
 ;; currently is not.
 
 (defun check-from (connection update)
-  (let ((user (find-user (lichat-protocol:from update) connection)))
+  (let ((user (find-user (lichat-protocol:from update) (server connection))))
     (unless (eql user (lichat-protocol:user connection))
       (error "FROM field does not match connection source."))
     user))
 
 (defun check-target (connection update)
-  (let ((user (find-user (lichat-protocol:target update) connection)))
+  (let ((user (find-user (lichat-protocol:target update) (server connection))))
     (unless user
       (error "No such target."))
     user))
 
 (defun check-channel (connection update)
-  (let ((channel (find-channel (lichat-protocol:channel update) connection)))
+  (let ((channel (find-channel (lichat-protocol:channel update) (server connection))))
     (unless channel
       (error "No such channel."))
     (unless (find channel (lichat-protocol:channels (lichat-protocol:user connection)))
