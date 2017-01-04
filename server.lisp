@@ -256,7 +256,8 @@
 
 (defmethod init-connection ((connection connection) username)
   (let* ((server (server connection))
-         (user (find-user username server)))
+         (user (find-user username server))
+         (profile (find-profile user server)))
     (cond (user
            (setf (lichat-protocol:user connection) user)
            (dolist (channel (channels user))
@@ -268,20 +269,22 @@
            (setf (lichat-protocol:user connection) user)
            (join (find-channel (lichat-protocol:name server) server) user)))
     (push connection (lichat-protocol:connections user))
-    (reset-timeout (find-profile (lichat-protocol:name user) server))
+    (when profile
+      (reset-timeout profile))
     (send! connection 'connect
            :version (lichat-protocol:protocol-version))
     connection))
 
 (defmethod teardown-connection ((connection connection))
   (let ((user (lichat-protocol:user connection)))
-    (setf (lichat-protocol:connections user)
-          (remove connection (lichat-protocol:connections user)))
-    (unless (lichat-protocol:connections user)
-      (remove-user user (server connection))
-      (dolist (channel (lichat-protocol:channels user))
-        (leave channel user))
-      (start-timeout (find-profile (lichat-protocol:name user) (server connection))))))
+    (when user
+      (setf (lichat-protocol:connections user)
+            (remove connection (lichat-protocol:connections user)))
+      (unless (lichat-protocol:connections user)
+        (remove-user user (server connection))
+        (dolist (channel (lichat-protocol:channels user))
+          (leave channel user))
+        (start-timeout (find-profile (lichat-protocol:name user) (server connection)))))))
 
 (define-update-handler disconnect (connection update)
   (teardown-connection connection)
