@@ -97,14 +97,11 @@
   (sublis `((:registrant . ,registrant)) perms))
 
 (defun permitted (action channel user)
+  (v:info :test "~a ~a ~a" action channel user)
   (let ((entry (find action (lichat-protocol:permissions channel))))
     (when entry
       (or (eql T (second action))
           (find (lichat-protocol:name user) (second action) :test #'string-equal)))))
-
-(defun check-permitted (action channel user)
-  (unless (permitted action channel user)
-    (error "Not permitted.")))
 
 (defmethod create (registrant name server)
   (let ((username (lichat-protocol:name (find-user registrant server))))
@@ -121,7 +118,7 @@
                                 :name name
                                 :permissions (prep-perms username lichat-protocol:*default-primary-channel-permissions*)
                                 :lifetime most-positive-fixnum))
-                ((typep name 'lichat-protocol:channelname)
+                ((lichat-protocol:channelname-p name)
                  (make-instance 'channel
                                 :name name
                                 :permissions (prep-perms username lichat-protocol:*default-regular-channel-permissions*)
@@ -223,34 +220,31 @@
              :text (format NIL "Internal error; update flushed.")))))
 
 (define-update-handler connect (connection update)
+  (unless (lichat-protocol:username-p (lichat-protocol:from username))
+    (fail! 'lichat-protocol:bad-name :update-id (lichat-protocol:id update)))
   (cond ((string/= (lichat-protocol:version update)
                    (lichat-protocol:protocol-version))
          (fail! 'lichat-protocol:incompatible-version
                 :update-id (lichat-protocol:id update)
-                :compatible-versions (list (lichat-protocol:protocol-version))
-                :text (format NIL "~a is not supported." (lichat-protocol:version update))))
+                :compatible-versions (list (lichat-protocol:protocol-version))))
         ((lichat-protocol:password update)
          (let ((profile (find-profile update)))
            (cond ((not profile)
                   (fail! 'lichat-protocol:no-such-profile
-                         :update-id (lichat-protocol:id update)
-                         :text (format NIL "~a is not registered." (lichat-protocol:from update))))
-                 ((string/= (cryptos:pbkdf2-hash (lichat-protocol:password update)
-                                                 (salt (server connection)))
-                            (lichat-protocol:password profile))
-                  (fail! 'lichat-protocol:invalid-password
-                         :update-id (lichat-protocol:id update)
-                         :text (format NIL "Your password is wrong.")))
-                 (T
-                  (init-connection connection update)))))
+                         :update-id (lichat-protocol:id update))))
+           ((string/= (cryptos:pbkdf2-hash (lichat-protocol:password update)
+                                           (salt (server connection)))
+                      (lichat-protocol:password profile))
+            (fail! 'lichat-protocol:invalid-password
+                   :update-id (lichat-protocol:id update)))
+           (T
+            (init-connection connection update))))
         ((find-user update)
          (fail! 'lichat-protocol:username-taken
-                :update-id (lichat-protocol:id update)
-                :text (format NIL "The name ~s is already in use." (lichat-protocol:from update))))
+                :update-id (lichat-protocol:id update)))
         ((find-profile update)
          (fail! 'lichat-protocol:username-taken
-                :update-id (lichat-protocol:id update)
-                :text (format NIL "The name ~s is registered." (lichat-protocol:from update))))
+                :update-id (lichat-protocol:id update)))
         (T
          (init-connection connection update))))
 
@@ -292,50 +286,47 @@
   (teardown-connection connection)
   (send! connection 'disconnect))
 
-;;; FIXME FOR INVALID FROM FIELDS.
-;; the protocol has FROM fields in order to both
-;; identify the source on the receiving side, and
-;; to act in stead of someone else on the sending
-;; side. However, this must be checked and properly
-;; treated in the processing functions, which it
-;; currently is not.
+(defun check-permitted (connection update &optional (channel (lichat-protocol:channel update)))
+  (unless (permitted (type-of update) (find-channel channel (server connection))
+                     (find-user (lichat-protocol:from update) (server connection)))
+    (fail! 'lichat-protocol:insufficient-permissions :update-id (lichat-protocol:id update))))
 
 (defun check-from (connection update)
   (let ((user (find-user (lichat-protocol:from update) (server connection))))
     (unless (eql user (lichat-protocol:user connection))
-      (error "FROM field does not match connection source."))
+      (fail! 'lichat-protocol:username-mismatch :update-id (lichat-protocol:id update)))
     user))
 
 (defun check-target (connection update)
   (let ((user (find-user (lichat-protocol:target update) (server connection))))
     (unless user
-      (error "No such target."))
+      (fail! 'lichat-protocol:no-such-user :update-id (lichat-protocol:id update)))
     user))
 
 (defun check-channel (connection update)
   (let ((channel (find-channel (lichat-protocol:channel update) (server connection))))
     (unless channel
-      (error "No such channel."))
+      (fail! 'lichat-protocol:no-such-channel :update-id (lichat-protocol:id update)))
     (unless (find channel (lichat-protocol:channels (lichat-protocol:user connection)))
-      (error "User not in channel."))
+      (fail! 'lichat-protocol:not-in-channel :update-id (lichat-protocol:id update)))
     channel))
 
 (define-update-handler message (connection update)
-  (let ((user (check-from connection update))
-        (channel (check-channel connection update)))
-    (check-permitted 'message channel user)
+  (let ((channel (check-channel connection update)))
+    (check-from connection update)
+    (check-permitted connection update)
     (send update channel)))
 
 (define-update-handler join (connection update)
   (let ((user (check-from connection update))
         (channel (check-channel connection update)))
-    (check-permitted 'join channel user)
+    (check-permitted connection update)
     (join channel user)))
 
 (define-update-handler leave (connection update)
   (let ((user (check-from connection update))
         (channel (check-channel connection update)))
-    (check-permitted 'leave channel user)
+    (check-permitted connection update)
     (leave channel user)))
 
 (define-update-handler ping (connection update)
@@ -346,19 +337,19 @@
 (define-update-handler channels (connection update)
   (send! connection 'channels
          :channels (loop for channel being the hash-values of (channels (server connection)) 
-                         when (check-permitted 'channels channel user)
+                         when (check-permitted connection update channel)
                          collect (lichat-protocol:name channel))))
 
 (define-update-handler users (connection update)
   (let ((channel (check-channel connection update)))
-    (check-permitted 'users channel user)
+    (check-permitted connection update)
     (send! connection 'users
            :channel (lichat-protocol:name channel)
            :users (lichat-protocol:users (lichat-protocol:users channel)))))
 
 (define-update-handler create (connection update)
   (let ((user (check-from connection update)))
-    (check-permitted 'message (find-channel T (server connection)) user)
+    (check-permitted connection update T)
     (join (create user
                   (lichat-protocol:channel update)
                   (server connection))
@@ -369,8 +360,8 @@
         (channel (check-channel connection update))
         (target (check-target connection update)))
     (unless (find channel (lichat-protocol:channels target))
-      (error "Target not in channel."))
-    (check-permitted 'kick channel user)
+      (fail! 'lichat-protocol:not-in-channel :update-id (lichat-protocol:id update)))
+    (check-permitted connection update)
     (send! channel 'kick
            :from (lichat-protocol:name user)
            :channel (lichat-protocol:name channel)
@@ -382,15 +373,15 @@
         (channel (check-channel connection update))
         (target (check-target connection update)))
     (when (find channel (lichat-protocol:channels target))
-      (error "Target already in channel."))
-    (check-permitted 'pull channel user)
+      (fail! 'lichat-protocol:already-in-channel :update-id (lichat-protocol:id update)))
+    (check-permitted connection update)
     (join channel target)))
 
 (define-update-handler permissions (connection update)
   (let ((user (check-from connection update))
         (channel (check-channel connection update)))
     (cond ((lichat-protocol:permissions update)
-           (check-permitted 'permissions channel user)
+           (check-permitted connection update)
            (setf (lichat-protocol:permissions channel)
                  (lichat-protocol:permissions update))
            (send! channel 'permissions
