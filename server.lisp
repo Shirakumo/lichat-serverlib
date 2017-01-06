@@ -4,7 +4,7 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:org.shirakumo.lichat.server)
+(in-package #:org.shirakumo.lichat.serverlib)
 
 (defclass timeoutable ()
   ((timeout :initform NIL :accessor timeout)))

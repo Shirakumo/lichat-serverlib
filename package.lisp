@@ -5,8 +5,8 @@
 |#
 
 (in-package #:cl-user)
-(defpackage #:lichat-server
-  (:nicknames #:org.shirakumo.lichat.server)
+(defpackage #:lichat-serverlib
+  (:nicknames #:org.shirakumo.lichat.serverlib)
   (:use #:cl)
   (:export
    #:server
