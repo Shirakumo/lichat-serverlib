@@ -309,7 +309,7 @@
 
 (define-update-handler disconnect (connection update)
   (teardown-connection connection)
-  (ignore-errors (send! connection 'disconnect))
+  (ignore-errors (send update connection))
   (invoke-restart 'close-connection))
 
 (define-update-handler message (connection update)
@@ -339,6 +339,7 @@
 
 (define-update-handler channels (connection update)
   (send! connection 'channels
+         :id (lichat-protocol:id update)
          :channels (loop for channel being the hash-values of (channels (server connection)) 
                          when (check-permitted connection update channel)
                          collect (lichat-protocol:name channel))))
@@ -347,6 +348,7 @@
   (let ((channel (check-channel connection update)))
     (check-permitted connection update)
     (send! connection 'users
+           :id (lichat-protocol:id update)
            :channel (lichat-protocol:name channel)
            :users (lichat-protocol:users (lichat-protocol:users channel)))))
 
@@ -357,7 +359,8 @@
     (join (create user
                   (lichat-protocol:channel update)
                   (server connection))
-          user)))
+          user
+          (lichat-protocol:id update))))
 
 (define-update-handler kick (connection update)
   (let ((user (check-from connection update))
@@ -366,20 +369,17 @@
     (unless (find channel (lichat-protocol:channels target))
       (fail! 'lichat-protocol:not-in-channel :update-id (lichat-protocol:id update)))
     (check-permitted connection update)
-    (send! channel 'kick
-           :from (lichat-protocol:name user)
-           :channel (lichat-protocol:name channel)
-           :target (lichat-protocol:name target))
+    (send update channel)
     (leave channel target)))
 
 (define-update-handler pull (connection update)
-  (let ((user (check-from connection update))
-        (channel (check-channel connection update))
+  (let ((channel (check-channel connection update))
         (target (check-target connection update)))
+    (check-from connection update)
     (when (find channel (lichat-protocol:channels target))
       (fail! 'lichat-protocol:already-in-channel :update-id (lichat-protocol:id update)))
     (check-permitted connection update)
-    (join channel target)))
+    (join channel target (lichat-protocol:id update))))
 
 (define-update-handler permissions (connection update)
   (let ((user (check-from connection update))
@@ -389,11 +389,13 @@
            (setf (lichat-protocol:permissions channel)
                  (lichat-protocol:permissions update))
            (send! channel 'permissions
+                  :id (lichat-protocol:id update)
                   :from (lichat-protocol:name user)
                   :channel (lichat-protocol:name channel)
                   :permissions (lichat-protocol:permissions channel)))
           (T
            (send! connection 'permissions
+                  :id (lichat-protocol:id update)
                   :from (lichat-protocol:name user)
                   :channel (lichat-protocol:name channel)
                   :permissions (lichat-protocol:permissions channel))))))
@@ -401,5 +403,4 @@
 (define-update-handler register (connection update)
   (let ((user (check-from connection update)))
     (register user (lichat-protocol:password update) (server connection))
-    (send! connection 'register
-           :password "")))
+    (send update connection)))
