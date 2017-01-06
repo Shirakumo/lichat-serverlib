@@ -212,35 +212,6 @@
              :update-id (lichat-protocol:id update)
              :text (format NIL "Internal error; update flushed.")))))
 
-(define-update-handler connect (connection update)
-  (unless (lichat-protocol:username-p (lichat-protocol:from update))
-    (fail! 'lichat-protocol:bad-name :update-id (lichat-protocol:id update)))
-  (cond ((string/= (lichat-protocol:version update)
-                   (lichat-protocol:protocol-version))
-         (fail! 'lichat-protocol:incompatible-version
-                :update-id (lichat-protocol:id update)
-                :compatible-versions (list (lichat-protocol:protocol-version))))
-        ((lichat-protocol:password update)
-         (let ((profile (find-profile update)))
-           (cond ((not profile)
-                  (fail! 'lichat-protocol:no-such-profile
-                         :update-id (lichat-protocol:id update)))
-                 ((string/= (cryptos:pbkdf2-hash (lichat-protocol:password update)
-                                                 (salt (server connection)))
-                            (lichat-protocol:password profile))
-                  (fail! 'lichat-protocol:invalid-password
-                         :update-id (lichat-protocol:id update)))
-                 (T
-                  (init-connection connection update)))))
-        ((find-user update)
-         (fail! 'lichat-protocol:username-taken
-                :update-id (lichat-protocol:id update)))
-        ((find-profile update)
-         (fail! 'lichat-protocol:username-taken
-                :update-id (lichat-protocol:id update)))
-        (T
-         (init-connection connection update))))
-
 (defmethod init-connection ((connection connection) update)
   (let* ((username (lichat-protocol:from update))
          (server (server connection))
@@ -275,10 +246,6 @@
         (let ((profile (find-profile (lichat-protocol:name user) (server connection))))
           (when profile (start-timeout profile)))))))
 
-(define-update-handler disconnect (connection update)
-  (teardown-connection connection)
-  (send! connection 'disconnect))
-
 (defun check-permitted (connection update &optional (channel (lichat-protocol:channel update)))
   (unless (permitted (type-of update) (find-channel channel (server connection))
                      (find-user (lichat-protocol:from update) (server connection)))
@@ -310,6 +277,40 @@
       (fail! 'lichat-protocol:bad-name :update-id (lichat-protocol:id update)))
     (when (find-channel name (server connection))
       (fail! 'lichat-protocol:channelname-taken :update-id (lichat-protocol:id update)))))
+
+(define-update-handler connect (connection update)
+  (unless (lichat-protocol:username-p (lichat-protocol:from update))
+    (fail! 'lichat-protocol:bad-name :update-id (lichat-protocol:id update)))
+  (cond ((string/= (lichat-protocol:version update)
+                   (lichat-protocol:protocol-version))
+         (fail! 'lichat-protocol:incompatible-version
+                :update-id (lichat-protocol:id update)
+                :compatible-versions (list (lichat-protocol:protocol-version))))
+        ((lichat-protocol:password update)
+         (let ((profile (find-profile update)))
+           (cond ((not profile)
+                  (fail! 'lichat-protocol:no-such-profile
+                         :update-id (lichat-protocol:id update)))
+                 ((string/= (cryptos:pbkdf2-hash (lichat-protocol:password update)
+                                                 (salt (server connection)))
+                            (lichat-protocol:password profile))
+                  (fail! 'lichat-protocol:invalid-password
+                         :update-id (lichat-protocol:id update)))
+                 (T
+                  (init-connection connection update)))))
+        ((find-user update)
+         (fail! 'lichat-protocol:username-taken
+                :update-id (lichat-protocol:id update)))
+        ((find-profile update)
+         (fail! 'lichat-protocol:username-taken
+                :update-id (lichat-protocol:id update)))
+        (T
+         (init-connection connection update))))
+
+(define-update-handler disconnect (connection update)
+  (teardown-connection connection)
+  (ignore-errors (send! connection 'disconnect))
+  (invoke-restart 'close-connection))
 
 (define-update-handler message (connection update)
   (let ((channel (check-channel connection update)))

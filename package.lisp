@@ -31,4 +31,5 @@
    #:send
    #:process
    #:init-connection
-   #:teardown-connection))
+   #:teardown-connection
+   #:close-connection))
