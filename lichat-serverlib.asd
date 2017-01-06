@@ -5,7 +5,7 @@
 |#
 
 (in-package #:cl-user)
-(asdf:defsystem lichat-server
+(asdf:defsystem lichat-serverlib
   :version "1.0.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
