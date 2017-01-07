@@ -23,7 +23,9 @@
   ((users :initform (make-hash-table :test 'equal) :accessor users)
    (profiles :initform (make-hash-table :test 'equal) :accessor profiles)
    (channels :initform (make-hash-table :test 'equal) :accessor channels)
-   (salt :initarg :salt :accessor salt))
+   (salt :initarg :salt :accessor salt)
+   ;; FIXME: Flood control
+   )
   (:default-initargs
    :salt ""))
 
