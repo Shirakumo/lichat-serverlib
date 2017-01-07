@@ -332,11 +332,12 @@
          :id (lichat-protocol:id update)))
 
 (define-update-handler channels (connection update)
-  (send! connection 'channels
-         :id (lichat-protocol:id update)
-         :channels (loop for channel being the hash-values of (channels (server connection)) 
-                         when (check-permitted connection update channel)
-                         collect (lichat-protocol:name channel))))
+  (let ((user (find-user (lichat-protocol:from update) (server connection))))
+    (send! connection 'channels
+           :id (lichat-protocol:id update)
+           :channels (loop for channel being the hash-values of (channels (server connection)) 
+                           when (permitted (type-of update) channel user)
+                           collect (lichat-protocol:name channel)))))
 
 (define-update-handler users (connection update)
   (let ((channel (check-channel connection update)))
@@ -344,7 +345,7 @@
     (send! connection 'users
            :id (lichat-protocol:id update)
            :channel (lichat-protocol:name channel)
-           :users (lichat-protocol:users channel))))
+           :users (mapcar #'lichat-protocol:name (lichat-protocol:users channel)))))
 
 (define-update-handler create (connection update)
   (let ((user (check-from connection update)))
@@ -357,9 +358,9 @@
           (lichat-protocol:id update))))
 
 (define-update-handler kick (connection update)
-  (let ((user (check-from connection update))
-        (channel (check-channel connection update))
+  (let ((channel (check-channel connection update))
         (target (check-target connection update)))
+    (check-from connection update)
     (unless (find channel (lichat-protocol:channels target))
       (fail! 'lichat-protocol:not-in-channel :update-id (lichat-protocol:id update)))
     (check-permitted connection update)
