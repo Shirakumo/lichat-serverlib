@@ -103,23 +103,23 @@
           (find (lichat-protocol:name user) (second entry) :test #'string-equal)))))
 
 (defmethod create (registrant name server)
-  (let ((username (lichat-protocol:name (find-user registrant server))))
-    (setf (find-channel name server)
-          (cond ((or (not name) (string= name ""))
-                 (make-instance 'channel
-                                :name (format NIL "@~a" (lichat-protocol:next-id))
-                                :permissions (prep-perms username lichat-protocol:*default-anonymous-channel-permissions*)
-                                :lifetime 0))
-                ((string= name (lichat-protocol:name server))
-                 (make-instance 'channel
-                                :name name
-                                :permissions (prep-perms username lichat-protocol:*default-primary-channel-permissions*)
-                                :lifetime most-positive-fixnum))
-                (T
-                 (make-instance 'channel
-                                :name name
-                                :permissions (prep-perms username lichat-protocol:*default-regular-channel-permissions*)
-                                :lifetime lichat-protocol:*default-channel-lifetime*))))))
+  (let* ((username (lichat-protocol:name (find-user registrant server)))
+         (channel (cond ((not name)
+                         (make-instance 'channel
+                                        :name (format NIL "@~a" (lichat-protocol:next-id))
+                                        :permissions (prep-perms username lichat-protocol:*default-anonymous-channel-permissions*)
+                                        :lifetime 0))
+                        ((string= name (lichat-protocol:name server))
+                         (make-instance 'channel
+                                        :name name
+                                        :permissions (prep-perms username lichat-protocol:*default-primary-channel-permissions*)
+                                        :lifetime most-positive-fixnum))
+                        (T
+                         (make-instance 'channel
+                                        :name name
+                                        :permissions (prep-perms username lichat-protocol:*default-regular-channel-permissions*)
+                                        :lifetime lichat-protocol:*default-channel-lifetime*)))))
+    (setf (find-channel (lichat-protocol:name channel) server) channel)))
 
 (defmethod join ((channel lichat-protocol:channel) (user lichat-protocol:user) &optional id)
   (pushnew user (lichat-protocol:users channel))
@@ -273,10 +273,11 @@
 
 (defun check-channelname (connection update)
   (let ((name (lichat-protocol:channel update)))
-    (unless (lichat-protocol:channelname-p name)
-      (fail! 'lichat-protocol:bad-name :update-id (lichat-protocol:id update)))
-    (when (find-channel name (server connection))
-      (fail! 'lichat-protocol:channelname-taken :update-id (lichat-protocol:id update)))))
+    (when name
+      (unless (lichat-protocol:channelname-p name)
+        (fail! 'lichat-protocol:bad-name :update-id (lichat-protocol:id update)))
+      (when (find-channel name (server connection))
+        (fail! 'lichat-protocol:channelname-taken :update-id (lichat-protocol:id update))))))
 
 (define-update-handler connect (connection update)
   (unless (lichat-protocol:username-p (lichat-protocol:from update))
@@ -350,7 +351,7 @@
     (send! connection 'users
            :id (lichat-protocol:id update)
            :channel (lichat-protocol:name channel)
-           :users (lichat-protocol:users (lichat-protocol:users channel)))))
+           :users (lichat-protocol:users channel))))
 
 (define-update-handler create (connection update)
   (let ((user (check-from connection update)))
