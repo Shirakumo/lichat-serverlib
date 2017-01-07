@@ -194,14 +194,7 @@
 
 (defmacro define-update-handler (type (connection update) &body body)
   `(defmethod process ((,connection connection) (,update ,(find-symbol (string type) :lichat-protocol)))
-     (flet ((find-user (ident)
-              (find-user ident (server ,connection)))
-            (find-profile (ident)
-              (find-profile ident (server ,connection)))
-            (find-channel (ident)
-              (find-channel ident (server ,connection))))
-       (declare (ignorable #'find-user #'find-profile #'find-channel))
-       ,@body)))
+     ,@body))
 
 (defmethod process :around ((connection connection) (update lichat-protocol:update))
   (restart-case
@@ -288,7 +281,7 @@
                 :update-id (lichat-protocol:id update)
                 :compatible-versions (list (lichat-protocol:protocol-version))))
         ((lichat-protocol:password update)
-         (let ((profile (find-profile update)))
+         (let ((profile (find-profile update (server connection))))
            (cond ((not profile)
                   (fail! 'lichat-protocol:no-such-profile
                          :update-id (lichat-protocol:id update)))
@@ -299,10 +292,10 @@
                          :update-id (lichat-protocol:id update)))
                  (T
                   (init-connection connection update)))))
-        ((find-user update)
+        ((find-user update (server connection))
          (fail! 'lichat-protocol:username-taken
                 :update-id (lichat-protocol:id update)))
-        ((find-profile update)
+        ((find-profile update (server connection))
          (fail! 'lichat-protocol:username-taken
                 :update-id (lichat-protocol:id update)))
         (T
