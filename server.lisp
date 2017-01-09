@@ -185,13 +185,7 @@
         (send! connection 'malformed-update
                :text (princ-to-string err))))
     (when (typep message 'lichat-protocol:wire-object)
-      (handler-case
-          (process connection message)
-        (failure-condition (err)
-          (apply #'send! connection (failure-type err) (failure-args err)))
-        (lichat-protocol:protocol-condition (err)
-          (send! connection 'failure
-                 :text (format NIL "Internal error: ~a" err)))))
+      (process connection message))
     message))
 
 (defmacro define-update-handler (type (connection update) &body body)
@@ -200,7 +194,13 @@
 
 (defmethod process :around ((connection connection) (update lichat-protocol:update))
   (restart-case
-      (call-next-method)
+      (handler-case
+          (call-next-method)
+        (failure-condition (err)
+          (apply #'send! connection (failure-type err) (failure-args err)))
+        (lichat-protocol:protocol-condition (err)
+          (send! connection 'failure
+                 :text (format NIL "Internal error: ~a" err))))
     (continue ()
       :report "Respond with a failure and return."
       (send! connection 'update-failure
