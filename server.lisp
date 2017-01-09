@@ -19,6 +19,9 @@
   (when (timeout timeoutable)
     (< (get-universal-time) (timeout timeoutable))))
 
+;; FIXME: What about channels created by unregs? What happens if
+;;        the unreg leaves and potentially a new user under the same
+;;        name enters? Might need to rethink perms for unregs.
 ;; FIXME: Secure asynchronous access to users/profiles/channels.
 (defclass server (lichat-protocol:user)
   ((users :initform (make-hash-table :test 'equal) :accessor users)
