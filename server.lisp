@@ -382,7 +382,8 @@
     (when (find channel (lichat-protocol:channels target))
       (fail! 'lichat-protocol:already-in-channel :update-id (lichat-protocol:id update)))
     (check-permitted connection update)
-    (join channel target (lichat-protocol:id update))))
+    (send update channel)
+    (send update target)))
 
 (define-update-handler permissions (connection update)
   (let ((user (check-from connection update))
