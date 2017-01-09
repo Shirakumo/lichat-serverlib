@@ -22,6 +22,8 @@
 ;; FIXME: What about channels created by unregs? What happens if
 ;;        the unreg leaves and potentially a new user under the same
 ;;        name enters? Might need to rethink perms for unregs.
+;; FIXME: Permissions need to be more complex to allow banning or
+;;        excluding people instead of just allowing people.
 ;; FIXME: Secure asynchronous access to users/profiles/channels.
 (defclass server (lichat-protocol:user)
   ((users :initform (make-hash-table :test 'equal) :accessor users)
