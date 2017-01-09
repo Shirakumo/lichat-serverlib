@@ -77,8 +77,13 @@
   (remhash (coerce-username name) (users server)))
 
 (defmethod find-profile (name (server server))
-  ;; FIXME: Check timeout, remove if done
-  (gethash (coerce-username name) (profiles server)))
+  (let* ((name (coerce-username name))
+         (profile (gethash name (profiles server))))
+    (cond ((alive-p profile)
+           profile)
+          (T
+           (remhash name (profiles server))
+           NIL))))
 
 (defmethod (setf find-profile) (profile name (server server))
   (setf (gethash (coerce-username name) (profiles server)) profile))
@@ -90,8 +95,13 @@
   (cond ((eql name T)
          (find-channel (lichat-protocol:name server) server))
         (T
-         ;; FIXME: Check timeout, remove if done
-         (gethash (coerce-channelname name) (channels server)))))
+         (let* ((name (coerce-channelname name))
+                (channel (gethash name (channels server))))
+           (cond ((alive-p channel)
+                  channel)
+                 (T
+                  (remhash name (channels server))
+                  NIL))))))
 
 (defmethod (setf find-channel) (channel name (server server))
   (setf (gethash (coerce-channelname name) (channels server)) channel))
