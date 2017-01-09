@@ -19,6 +19,7 @@
   (when (timeout timeoutable)
     (< (get-universal-time) (timeout timeoutable))))
 
+;; FIXME: Secure asynchronous access to users/profiles/channels.
 (defclass server (lichat-protocol:user)
   ((users :initform (make-hash-table :test 'equal) :accessor users)
    (profiles :initform (make-hash-table :test 'equal) :accessor profiles)
