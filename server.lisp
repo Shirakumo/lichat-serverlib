@@ -210,23 +210,25 @@
 (defmethod init-connection ((connection connection) update)
   (let* ((username (lichat-protocol:from update))
          (server (server connection))
-         (user (find-user username server)))
-    (cond (user
-           (setf (lichat-protocol:user connection) user)
-           (dolist (channel (channels user))
-             (send! connection 'join :from (lichat-protocol:name user)
-                                     :channel (lichat-protocol:name channel))))
+         (user (find-user username server))
+         (user-already-there user))
+    (cond (user-already-there
+           (setf (lichat-protocol:user connection) user))
           (T
            (setf user (make-instance 'user :name username))
            (setf (find-user username server) user)
-           (setf (lichat-protocol:user connection) user)
-           (join (find-channel (lichat-protocol:name server) server) user)))
+           (setf (lichat-protocol:user connection) user)))
     (push connection (lichat-protocol:connections user))
     (when (find-profile user server)
       (reset-timeout (find-profile user server)))
     (send! connection 'connect
            :id (lichat-protocol:id update)
            :version (lichat-protocol:protocol-version))
+    (if user-already-there
+        (dolist (channel (channels user))
+          (send! connection 'join :from (lichat-protocol:name user)
+                                  :channel (lichat-protocol:name channel)))
+        (join (find-channel (lichat-protocol:name server) server) user))
     connection))
 
 (defmethod teardown-connection ((connection connection))
