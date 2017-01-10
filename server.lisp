@@ -122,7 +122,7 @@
       (or (eql T (second entry))
           (find (lichat-protocol:name user) (second entry) :test #'string-equal)))))
 
-(defmethod create (registrant name server)
+(defmethod create (registrant name (server server))
   (let* ((username (lichat-protocol:name (find-user registrant server)))
          (channel (cond ((not name)
                          (make-instance 'channel
