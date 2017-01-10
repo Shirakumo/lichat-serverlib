@@ -422,3 +422,13 @@
   (let ((user (check-from connection update)))
     (register user (lichat-protocol:password update) (server connection))
     (send update connection)))
+
+(define-update-handler user-info (connection update)
+  (let ((target (check-target connection update)))
+    (check-from connection update)
+    (send! connection 'user-info
+           :id (lichat-protocol:id update)
+           :target (lichat-protocol:name target)
+           :connections (max 1 (length (lichat-protocol:connections target)))
+           :registered (if (find-profile target (server connection))
+                           T NIL))))
