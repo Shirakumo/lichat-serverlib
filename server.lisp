@@ -16,8 +16,8 @@
   (setf (timeout timeoutable) NIL))
 
 (defmethod alive-p ((timeoutable timeoutable))
-  (when (timeout timeoutable)
-    (< (get-universal-time) (timeout timeoutable))))
+  (or (not (timeout timeoutable))
+      (< (get-universal-time) (timeout timeoutable))))
 
 ;; FIXME: What about channels created by unregs? What happens if
 ;;        the unreg leaves and potentially a new user under the same
@@ -81,7 +81,8 @@
 (defmethod find-profile (name (server server))
   (let* ((name (coerce-username name))
          (profile (gethash name (profiles server))))
-    (cond ((alive-p profile)
+    (cond ((not profile) NIL)
+          ((alive-p profile)
            profile)
           (T
            (remhash name (profiles server))
@@ -99,7 +100,8 @@
         (T
          (let* ((name (coerce-channelname name))
                 (channel (gethash name (channels server))))
-           (cond ((alive-p channel)
+           (cond ((not channel) NIL)
+                 ((alive-p channel)
                   channel)
                  (T
                   (remhash name (channels server))
