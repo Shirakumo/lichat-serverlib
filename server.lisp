@@ -369,8 +369,10 @@
                            collect (lichat-protocol:name channel)))))
 
 (define-update-handler users (connection update)
-  (let ((channel (check-channel connection update)))
-    (check-permitted connection update)
+  (let ((user (check-from connection update))
+        (channel (check-channel connection update)))
+    (unless (find channel (lichat-protocol:channels user))
+      (check-permitted connection update))
     (send! connection 'users
            :id (lichat-protocol:id update)
            :channel (lichat-protocol:name channel)
