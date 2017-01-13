@@ -264,7 +264,10 @@
 (defun check-permitted (connection update &optional (channel (lichat-protocol:channel update)))
   (unless (permitted (type-of update) (find-channel channel (server connection))
                      (find-user (lichat-protocol:from update) (server connection)))
-    (fail! 'lichat-protocol:insufficient-permissions :update-id (lichat-protocol:id update))))
+    (fail! 'lichat-protocol:insufficient-permissions
+           :update-id (lichat-protocol:id update)
+           :text (format NIL "You are not permitted to ~a in ~a."
+                         (type-of update) channel))))
 
 (defun check-from (connection update)
   (let ((user (find-user (lichat-protocol:from update) (server connection))))
