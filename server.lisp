@@ -402,21 +402,15 @@
 (define-update-handler permissions (connection update)
   (let ((user (check-from connection update))
         (channel (check-channel connection update)))
-    (cond ((lichat-protocol:permissions update)
-           (check-permitted connection update)
-           (setf (lichat-protocol:permissions channel)
-                 (lichat-protocol:permissions update))
-           (send! channel 'permissions
-                  :id (lichat-protocol:id update)
-                  :from (lichat-protocol:name user)
-                  :channel (lichat-protocol:name channel)
-                  :permissions (lichat-protocol:permissions channel)))
-          (T
-           (send! connection 'permissions
-                  :id (lichat-protocol:id update)
-                  :from (lichat-protocol:name user)
-                  :channel (lichat-protocol:name channel)
-                  :permissions (lichat-protocol:permissions channel))))))
+    (when (lichat-protocol:permissions update)
+      (check-permitted connection update)
+      (setf (lichat-protocol:permissions channel)
+            (lichat-protocol:permissions update)))
+    (send! connection 'permissions
+           :id (lichat-protocol:id update)
+           :from (lichat-protocol:name (server connection))
+           :channel (lichat-protocol:name channel)
+           :permissions (lichat-protocol:permissions channel))))
 
 (define-update-handler register (connection update)
   (let ((user (check-from connection update)))
