@@ -328,6 +328,15 @@
   (ignore-errors (send update connection))
   (invoke-restart 'close-connection))
 
+(define-update-handler ping (connection update)
+  ;; Do something with the timing.
+  (send! connection 'pong
+         :id (lichat-protocol:id update)))
+
+(define-update-handler pong (connection update)
+  ;; Do something with the timing.
+  )
+
 (define-update-handler message (connection update)
   (let ((channel (check-channel connection update)))
     (check-from connection update)
@@ -347,11 +356,6 @@
         (channel (check-channel connection update)))
     (check-permitted connection update)
     (leave channel user (lichat-protocol:id update))))
-
-(define-update-handler ping (connection update)
-  ;; Do something with the timing.
-  (send! connection 'pong
-         :id (lichat-protocol:id update)))
 
 (define-update-handler channels (connection update)
   (let ((user (find-user (lichat-protocol:from update) (server connection))))
