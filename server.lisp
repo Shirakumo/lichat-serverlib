@@ -400,11 +400,10 @@
   (let ((channel (check-channel connection update))
         (target (check-target connection update)))
     (check-from connection update)
+    (check-permitted connection update)
     (when (find channel (lichat-protocol:channels target))
       (fail! 'lichat-protocol:already-in-channel :update-id (lichat-protocol:id update)))
-    (check-permitted connection update)
-    (send update channel)
-    (send update target)))
+    (join channel target (lichat-protocol:id update))))
 
 (define-update-handler permissions (connection update)
   (let ((user (check-from connection update))
