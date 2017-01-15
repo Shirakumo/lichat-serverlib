@@ -6,6 +6,11 @@
 
 (in-package #:org.shirakumo.lichat.serverlib)
 
+;; FIXME: What about channels created by unregs? What happens if
+;;        the unreg leaves and potentially a new user under the same
+;;        name enters? Might need to rethink perms for unregs.
+;; FIXME: Flood control
+
 (defclass timeoutable ()
   ((timeout :initform NIL :accessor timeout)))
 
