@@ -19,21 +19,15 @@
   (or (not (timeout timeoutable))
       (< (get-universal-time) (timeout timeoutable))))
 
-;; FIXME: What about channels created by unregs? What happens if
-;;        the unreg leaves and potentially a new user under the same
-;;        name enters? Might need to rethink perms for unregs.
-;; FIXME: Permissions need to be more complex to allow banning or
-;;        excluding people instead of just allowing people.
-;; FIXME: Secure asynchronous access to users/profiles/channels.
 (defclass server (lichat-protocol:user)
   ((users :initform (make-hash-table :test 'equal) :accessor users)
    (profiles :initform (make-hash-table :test 'equal) :accessor profiles)
    (channels :initform (make-hash-table :test 'equal) :accessor channels)
    (salt :initarg :salt :accessor salt)
-   ;; FIXME: Flood control
-   )
+   (timeout :initarg :timeout :accessor timeout))
   (:default-initargs
-   :salt ""))
+   :salt ""
+   :timeout 120))
 
 (defmethod initialize-instance :after ((server server) &key name)
   (check-type name lichat-protocol:username)
@@ -42,7 +36,8 @@
   (join (find-channel name server) server))
 
 (defclass connection (lichat-protocol:connection)
-  ((server :initarg :server :accessor server)))
+  ((server :initarg :server :accessor server)
+   (last-update :initform (get-universal-time) :accessor last-update)))
 
 (defclass channel (lichat-protocol:channel timeoutable)
   ())
@@ -141,7 +136,7 @@
                                         :lifetime lichat-protocol:*default-channel-lifetime*)))))
     (setf (find-channel (lichat-protocol:name channel) server) channel)))
 
-(defmethod join ((channel lichat-protocol:channel) (user lichat-protocol:user) &optional id)
+(defmethod join ((channel channel) (user user) &optional id)
   (pushnew user (lichat-protocol:users channel))
   (pushnew channel (lichat-protocol:channels user))
   (reset-timeout channel)
@@ -149,7 +144,7 @@
                        :channel (lichat-protocol:name channel)
                        :id (or id (lichat-protocol:next-id))))
 
-(defmethod leave ((channel lichat-protocol:channel) (user lichat-protocol:user) &optional id)
+(defmethod leave ((channel channel) (user user) &optional id)
   (send! channel 'leave :from (lichat-protocol:name user)
                         :channel (lichat-protocol:name channel)
                         :id (or id (lichat-protocol:next-id)))
@@ -187,11 +182,25 @@
                initargs)
         connection))
 
-(defmethod send ((object lichat-protocol:wire-object) (channel lichat-protocol:channel))
+;; We handle the timeout here because the protocol specifies that the server has to
+;; regularly send out a ping request, meaning SEND will be called regularly too.
+(defmethod send :around ((object lichat-protocol:wire-object) (connection connection))
+  (cond ((< (- (get-universal-time) (last-update connection))
+            (timeout (server connection)))
+         (call-next-method))
+        (T
+         (send! connection connection-unstable
+                :text (format NIL "Ping timeout of ~d second~:p reached."
+                              (timeout (server connection))))
+         (send! connection disconnect)
+         (teardown-connection connection)
+         (invoke-restart 'close-connection))))
+
+(defmethod send ((object lichat-protocol:wire-object) (channel channel))
   (dolist (user (lichat-protocol:users channel))
     (send object user)))
 
-(defmethod send ((object lichat-protocol:wire-object) (user lichat-protocol:user))
+(defmethod send ((object lichat-protocol:wire-object) (user user))
   (dolist (connection (lichat-protocol:connections user))
     (send object connection)))
 
@@ -211,6 +220,7 @@
      ,@body))
 
 (defmethod process :around ((connection connection) (update lichat-protocol:update))
+  (setf (last-update connection) (get-universal-time))
   (restart-case
       (handler-case
           (call-next-method)
