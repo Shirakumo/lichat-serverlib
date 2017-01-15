@@ -24,7 +24,20 @@
   (or (not (timeout timeoutable))
       (< (get-universal-time) (timeout timeoutable))))
 
-(defclass server (lichat-protocol:user)
+(defclass channel (lichat-protocol:channel timeoutable)
+  ())
+
+(defclass user (lichat-protocol:user)
+  ())
+
+(defclass connection (lichat-protocol:connection)
+  ((server :initarg :server :accessor server)
+   (last-update :initform (get-universal-time) :accessor last-update)))
+
+(defclass profile (lichat-protocol:profile timeoutable)
+  ())
+
+(defclass server (user)
   ((users :initform (make-hash-table :test 'equal) :accessor users)
    (profiles :initform (make-hash-table :test 'equal) :accessor profiles)
    (channels :initform (make-hash-table :test 'equal) :accessor channels)
@@ -39,19 +52,6 @@
   (setf (find-user name server) server)
   (create name name server)
   (join (find-channel name server) server))
-
-(defclass connection (lichat-protocol:connection)
-  ((server :initarg :server :accessor server)
-   (last-update :initform (get-universal-time) :accessor last-update)))
-
-(defclass channel (lichat-protocol:channel timeoutable)
-  ())
-
-(defclass profile (lichat-protocol:profile timeoutable)
-  ())
-
-(defclass user (lichat-protocol:user)
-  ())
 
 (defun coerce-username (name-ish)
   (etypecase name-ish
