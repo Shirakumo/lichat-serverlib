@@ -111,11 +111,23 @@
 (defun prep-perms (registrant perms)
   (sublis `((:registrant . ,registrant)) perms))
 
+(defun rule-permitted (rule name)
+  (etypecase rule
+    ((eql T) T)
+    (null NIL)
+    (string (string= rule name))
+    (list (ecase (first rule)
+            (or (loop for sub in rule
+                      thereis (rule-permitted sub name)))
+            (and (loop for sub in rule
+                       always (rule-permitted sub name)))
+            (not (not (rule-permitted (second rule) name)))))))
+
 (defun permitted (action channel user)
-  (let ((entry (assoc action (lichat-protocol:permissions channel))))
-    (when entry
-      (or (eql T (second entry))
-          (find (lichat-protocol:name user) (second entry) :test #'string-equal)))))
+  (let ((entry (cdr (assoc action (lichat-protocol:permissions channel))))
+        (name (coerce-username user)))
+    (loop for rule in entry
+          thereis (rule-permitted rule name))))
 
 (defmethod create (registrant name (server server))
   (let* ((username (lichat-protocol:name (find-user registrant server)))
