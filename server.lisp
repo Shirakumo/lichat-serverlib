@@ -263,7 +263,7 @@
            (setf user (make-instance 'user :name username))
            (setf (find-user username server) user)
            (setf (lichat-protocol:user connection) user)))
-    (push connection (lichat-protocol:connections user))
+    (pushnew connection (lichat-protocol:connections user))
     (when (find-profile user server)
       (reset-timeout (find-profile user server)))
     (send! connection 'connect
