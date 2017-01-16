@@ -16,6 +16,9 @@
    #:channels
    #:connection
    #:server
+   #:channel
+   #:user
+   #:timeoutable
    #:coerce-username
    #:coerce-channelname
    #:find-user
