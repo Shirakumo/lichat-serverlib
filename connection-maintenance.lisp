@@ -28,7 +28,7 @@
   (if (constantp type-ish env)
       (let ((conn (gensym "CONNECTION")))
         `(let ((,conn ,connection))
-           (send (make-instance ,(find-symbol (symbol-name type-ish) :lichat-protocol)
+           (send (make-instance (load-time-value (find-symbol (string ,type-ish) :lichat-protocol))
                                 ,@(unless (getf initargs :from)
                                     `(:from (lichat-protocol:name (server ,conn))))
                                 ,@initargs)
