@@ -39,12 +39,12 @@
 ;; regularly send out a ping request, meaning SEND will be called regularly too.
 (defmethod send :around ((object lichat-protocol:wire-object) (connection connection))
   (cond ((< (- (get-universal-time) (last-update connection))
-            (timeout (server connection)))
+            (idle-timeout (server connection)))
          (call-next-method))
         (T
          (send! connection connection-unstable
-                :text (format NIL "Ping timeout of ~d second~:p reached."
-                              (timeout (server connection))))
+                :text (format NIL "Ping idle-timeout of ~d second~:p reached."
+                              (idle-timeout (server connection))))
          (send! connection disconnect)
          (teardown-connection connection)
          (invoke-restart 'close-connection))))
@@ -56,17 +56,6 @@
 (defmethod send ((object lichat-protocol:wire-object) (user user))
   (dolist (connection (lichat-protocol:connections user))
     (send object connection)))
-
-(defmethod process ((connection connection) (stream stream))
-  (let ((message))
-    (handler-case
-        (setf message (lichat-protocol:from-wire stream))
-      (lichat-protocol:wire-condition (err)
-        (send! connection 'malformed-update
-               :text (princ-to-string err))))
-    (when (typep message 'lichat-protocol:wire-object)
-      (process connection message))
-    message))
 
 (defmethod pass-flood-gate ((connection connection))
   T)
@@ -87,6 +76,17 @@
           (T
            ;; Within the limit, carry on.
            T))))
+
+(defmethod process ((connection connection) (stream stream))
+  (let ((message))
+    (handler-case
+        (setf message (lichat-protocol:from-wire stream))
+      (lichat-protocol:wire-condition (err)
+        (send! connection 'malformed-update
+               :text (princ-to-string err))))
+    (when (typep message 'lichat-protocol:wire-object)
+      (process connection message))
+    message))
 
 (defmethod process :around ((connection flood-protected-connection) (update lichat-protocol:update))
   (when (pass-flood-gate connection)

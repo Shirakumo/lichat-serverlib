@@ -39,7 +39,7 @@
    #:profiles
    #:channels
    #:salt
-   #:timeout
+   #:idle-timeout
    #:flood-protected-server
    #:flood-frame
    #:flood-limit

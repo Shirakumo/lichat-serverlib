@@ -41,10 +41,10 @@
    (profiles :initform (make-hash-table :test 'equal) :accessor profiles)
    (channels :initform (make-hash-table :test 'equal) :accessor channels)
    (salt :initarg :salt :accessor salt)
-   (timeout :initarg :timeout :accessor timeout))
+   (idle-timeout :initarg :idle-timeout :accessor idle-timeout))
   (:default-initargs
    :salt ""
-   :timeout 120))
+   :idle-timeout 120))
 
 (defclass flood-protected-server (server)
   ((flood-frame :initarg :flood-frame :accessor flood-frame)
