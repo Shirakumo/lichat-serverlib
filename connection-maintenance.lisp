@@ -26,8 +26,13 @@
 
 (define-compiler-macro send! (&whole whole &environment env connection type-ish &rest initargs)
   (if (constantp type-ish env)
-      `(send (make-instance ,(find-symbol (symbol-name type-ish) :lichat-protocol) ,@initargs)
-             ,connection)
+      (let ((conn (gensym "CONNECTION")))
+        `(let ((,conn ,connection))
+           (send (make-instance ,(find-symbol (symbol-name type-ish) :lichat-protocol)
+                                ,@(unless (getf initargs :from)
+                                    `(:from (lichat-protocol:name (server ,conn))))
+                                ,@initargs)
+                 ,conn)))
       whole))
 
 ;; We handle the timeout here because the protocol specifies that the server has to
