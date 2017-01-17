@@ -70,7 +70,7 @@
           ((= (flood-limit (server connection)) (frame-count connection))
            ;; We've just reached the limit; notify the client.
            (send! connection 'too-many-updates))
-          ((< (flood-limit (server connection)) (frame-count connection))$
+          ((< (flood-limit (server connection)) (frame-count connection))
            ;; We are over the limit. Just drop the update.
            NIL)
           (T
