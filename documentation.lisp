@@ -159,14 +159,14 @@ See CONNECTION")
 
 See CONNECTION
 See LAST-FRAME
-See FRAME-COUNTER")
+See FRAME-COUNT")
 
   (function last-frame
     "Accessor to the last frame number the connection handled.
 
 See FLOOD-PROTECTED-CONNECTION")
 
-  (function frame-counter
+  (function frame-count
     "Accessor to the number of updates that were processed within the last frame.
 
 See FLOOD-PROTECTED-CONNECTION")

@@ -31,7 +31,7 @@
 
 (defclass flood-protected-connection (connection)
   ((last-frame :initform 0 :accessor last-frame)
-   (frame-counter :initform 0 :accessor frame-counter)))
+   (frame-count :initform 0 :accessor frame-count)))
 
 (defclass profile (lichat-protocol:profile timeoutable)
   ())

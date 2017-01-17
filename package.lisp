@@ -32,7 +32,7 @@
    #:last-update
    #:flood-protected-connection
    #:last-frame
-   #:frame-counter
+   #:frame-count
    #:profile
    #:server
    #:users
