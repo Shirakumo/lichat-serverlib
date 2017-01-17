@@ -42,10 +42,10 @@
             (idle-timeout (server connection)))
          (call-next-method))
         (T
-         (send! connection connection-unstable
+         (send! connection 'connection-unstable
                 :text (format NIL "Ping idle-timeout of ~d second~:p reached."
                               (idle-timeout (server connection))))
-         (send! connection disconnect)
+         (send! connection 'disconnect)
          (teardown-connection connection)
          (invoke-restart 'close-connection))))
 
