@@ -121,8 +121,8 @@
     (join channel target (lichat-protocol:id update))))
 
 (define-update-handler permissions (connection update)
-  (let ((user (check-from connection update))
-        (channel (check-channel connection update)))
+  (let ((channel (check-channel connection update)))
+    (check-from connection update)
     (when (lichat-protocol:permissions update)
       (check-permitted connection update)
       (setf (lichat-protocol:permissions channel)
