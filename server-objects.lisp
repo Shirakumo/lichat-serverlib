@@ -51,7 +51,7 @@
    (flood-limit :initarg :flood-limit :accessor flood-limit))
   (:default-initargs
    :flood-frame 30
-   :flood-limit 30))
+   :flood-limit 40))
 
 (defmethod initialize-instance :after ((server server) &key name)
   (check-type name lichat-protocol:username)
