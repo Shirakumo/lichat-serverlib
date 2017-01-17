@@ -14,7 +14,10 @@
   :homepage "https://github.com/Shinmera/lichat"
   :serial T
   :components ((:file "package")
-               (:file "server")
+               (:file "server-objects")
+               (:file "server-operations")
+               (:file "connection-maintenance")
+               (:file "update-handlers")
                (:file "documentation"))
   :depends-on (:lichat-protocol
                :crypto-shortcuts
