@@ -30,8 +30,8 @@
    (last-update :initform (get-universal-time) :accessor last-update)))
 
 (defclass flood-protected-connection (connection)
-  (last-frame :initform 0 :accessor last-frame)
-  (frame-counter :initform 0 :accessor frame-counter))
+  ((last-frame :initform 0 :accessor last-frame)
+   (frame-counter :initform 0 :accessor frame-counter)))
 
 (defclass profile (lichat-protocol:profile timeoutable)
   ())
