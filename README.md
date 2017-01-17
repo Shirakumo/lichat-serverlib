@@ -21,3 +21,4 @@ For a simple illustrative example, see the [lichat-tcp-server](https://shirakumo
 * [lichat-protocol](https://shirakumo.github.io/lichat-protocol) The Lichat protocol specification.
 * [lichat-tcp-server](https://shirakumo.github.io/lichat-tcp-server) A basic, threaded, TCP-based implementation of a Lichat server.
 * [lichat-tcp-client](https://shirakumo.github.io/lichat-tcp-client) A basic, threaded, TCP-based implementation of a Lichat client.
+* [LionChat](https://github.com/Shirakumo/lionchat) A Qt GUI client for a TCP server.
