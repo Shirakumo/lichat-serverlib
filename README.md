@@ -18,6 +18,6 @@ For a simple illustrative example, see the [lichat-tcp-server](https://shirakumo
 
 ## Also See
 
-* [lichat-protocol](https://shirakumo.org/projects/lichat-protocol) The Lichat protocol specification.
-* [lichat-tcp-server](https://shirakumo.org/projects/lichat-tcp-server) A basic, threaded, TCP-based implementation of a Lichat server.
-* [lichat-tcp-client](https://shirakumo.org/projects/lichat-tcp-client) A basic, threaded, TCP-based implementation of a Lichat client.
+* [lichat-protocol](https://shirakumo.github.io/lichat-protocol) The Lichat protocol specification.
+* [lichat-tcp-server](https://shirakumo.github.io/lichat-tcp-server) A basic, threaded, TCP-based implementation of a Lichat server.
+* [lichat-tcp-client](https://shirakumo.github.io/lichat-tcp-client) A basic, threaded, TCP-based implementation of a Lichat client.
