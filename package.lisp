@@ -8,31 +8,69 @@
 (defpackage #:lichat-serverlib
   (:nicknames #:org.shirakumo.lichat.serverlib)
   (:use #:cl)
+  ;; connection-maintenance.lisp
   (:export
+   #:failure-condition
+   #:failure-type
+   #:failure-args
+   #:fail!
+   #:send!
+   #:send
+   #:process
+   #:pass-flood-gate)
+  ;; server-objects.lisp
+  (:export
+   #:timeoutable
+   #:timeout
+   #:start-timeout
+   #:reset-timeout
+   #:alive-p
+   #:channel
+   #:user
+   #:connection
    #:server
-   #:hostname
+   #:last-update
+   #:flood-protected-connection
+   #:last-frame
+   #:frame-counter
+   #:profile
+   #:server
    #:users
    #:profiles
    #:channels
-   #:connection
-   #:server
-   #:channel
-   #:user
-   #:timeoutable
+   #:salt
+   #:timeout
+   #:flood-protected-server
+   #:flood-frame
+   #:flood-limit
+   #:make-connection
    #:coerce-username
    #:coerce-channelname
    #:find-user
    #:remove-user
+   #:make-user
    #:find-profile
    #:remove-profile
+   #:make-profile
    #:find-channel
    #:remove-channel
-   #:make-channel
+   #:make-channel)
+  ;; server-operations.lisp
+  (:export
+   #:prep-perms
+   #:rule-permitted
+   #:permitted
+   #:create
    #:join
    #:leave
-   #:send!
-   #:send
-   #:process
+   #:register
    #:init-connection
    #:teardown-connection
-   #:close-connection))
+   #:check-permitted
+   #:check-from
+   #:check-target
+   #:check-channel
+   #:check-channelname)
+  ;; update-handlers.lisp
+  (:export
+   #:define-update-handler))
