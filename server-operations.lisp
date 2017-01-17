@@ -68,15 +68,10 @@
     (start-timeout channel)))
 
 (defmethod register (registrant password server)
-  (let ((user (find-user registrant server)))
-    (unless user
-      (error "No such user."))
-    (when (find-profile (lichat-protocol:name user) server)
-      (error "Already registered."))
-    (setf (find-profile user server)
-          (make-profile server
-                        :name (lichat-protocol:name user)
-                        :password (cryptos:pbkdf2-hash password (salt server))))))
+  (setf (find-profile registrant server)
+        (make-profile server
+                      :name registrant
+                      :password (cryptos:pbkdf2-hash password (salt server)))))
 
 (defmethod init-connection ((connection connection) update)
   (let* ((username (lichat-protocol:from update))
