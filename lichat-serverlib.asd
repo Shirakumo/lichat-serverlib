@@ -11,7 +11,7 @@
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "Tools to help build a server using the lichat protocol."
-  :homepage "https://github.com/Shinmera/lichat"
+  :homepage "https://github.com/Shirakumo/lichat-serverlib"
   :serial T
   :components ((:file "package")
                (:file "server-objects")
