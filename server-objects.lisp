@@ -27,7 +27,9 @@
 
 (defclass connection (lichat-protocol:connection)
   ((server :initarg :server :accessor server)
-   (last-update :initform (get-universal-time) :accessor last-update)))
+   (last-update :initform (get-universal-time) :accessor last-update))
+  (:default-initargs
+   :server NIL))
 
 (defclass flood-protected-connection (connection)
   ((last-frame :initform 0 :accessor last-frame)
