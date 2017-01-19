@@ -42,6 +42,9 @@
             (idle-timeout (server connection)))
          (call-next-method))
         (T
+         ;; Avoid infinite recursion by updating. Doesn't matter since we're closing
+         ;; down anyway.
+         (setf (last-update connection) (get-universal-time))
          (send! connection 'connection-unstable
                 :text (format NIL "Ping idle-timeout of ~d second~:p reached."
                               (idle-timeout (server connection))))
