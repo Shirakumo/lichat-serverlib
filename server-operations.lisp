@@ -91,7 +91,7 @@
            :id (lichat-protocol:id update)
            :version (lichat-protocol:protocol-version))
     (if user-already-there
-        (dolist (channel (channels user))
+        (dolist (channel (lichat-protocol:channels user))
           (send! connection 'join :from (lichat-protocol:name user)
                                   :channel (lichat-protocol:name channel)))
         (join (find-channel (lichat-protocol:name server) server) user))
