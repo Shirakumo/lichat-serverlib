@@ -7,7 +7,7 @@
 (in-package #:org.shirakumo.lichat.serverlib)
 
 (defclass timeoutable ()
-  ((timeout :initform NIL :accessor timeout)))
+  ((timeout :initarg :timeout :initform NIL :accessor timeout)))
 
 (defmethod start-timeout ((timeoutable timeoutable))
   (setf (timeout timeoutable) (+ (get-universal-time) (lichat-protocol:lifetime timeoutable))))
