@@ -70,7 +70,7 @@
 (defmethod register (registrant password server)
   (setf (find-profile registrant server)
         (make-profile server
-                      :name registrant
+                      :name (coerce-username registrant)
                       :password (cryptos:pbkdf2-hash password (salt server)))))
 
 (defmethod init-connection ((connection connection) update)
