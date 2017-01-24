@@ -11,7 +11,12 @@
 ;;        name enters? Might need to rethink perms for unregs.
 
 (defun prep-perms (registrant perms)
-  (sublis `((:registrant . ,registrant)) perms))
+  (labels ((rrep (thing)
+             (cond ((eql thing :registrant) registrant)
+                   ((consp thing) (cons (rrep (car thing)) (rrep (cdr thing))))
+                   (T thing))))
+    (loop for (action . rule) in perms
+          collect (cons action (rrep rule)))))
 
 (defun rule-permitted (rule name)
   (etypecase rule
