@@ -95,6 +95,10 @@
 (defmethod make-user ((server server) &rest initargs)
   (apply #'make-instance 'user initargs))
 
+(defmethod list-users ((server server))
+  (loop for user being the hash-values of (users server)
+        collect user))
+
 (defmethod find-profile (name (server server))
   (let* ((name (coerce-username name))
          (profile (gethash name (profiles server))))
@@ -114,6 +118,10 @@
 (defmethod make-profile ((server server) &rest initargs)
   (apply #'make-instance 'profile initargs))
 
+(defmethod list-profiles ((server server))
+  (loop for profile being the hash-values of (profiles server)
+        collect profile))
+
 (defmethod find-channel (name (server server))
   (cond ((eql name T)
          (find-channel (lichat-protocol:name server) server))
@@ -128,10 +136,20 @@
                   NIL))))))
 
 (defmethod (setf find-channel) (channel name (server server))
-  (setf (gethash (coerce-channelname name) (channels server)) channel))
+  (cond ((eql name T)
+         (setf (find-channel (lichat-protocol:name server) server) channel))
+        (T
+         (setf (gethash (coerce-channelname name) (channels server)) channel))))
 
 (defmethod remove-channel (name (server server))
-  (remhash (coerce-channelname name) (channels server)))
+  (cond ((eql name T)
+         (remove-channel (lichat-protocol:name server) server))
+        (T
+         (remhash (coerce-channelname name) (channels server)))))
 
 (defmethod make-channel ((server server) &rest initargs)
   (apply #'make-instance 'channel initargs))
+
+(defmethod list-channels ((server server))
+  (loop for channel being the hash-values of (channels server)
+        collect channel))

@@ -77,7 +77,7 @@
   (let ((user (find-user (lichat-protocol:from update) (server connection))))
     (send! connection 'channels
            :id (lichat-protocol:id update)
-           :channels (loop for channel being the hash-values of (channels (server connection)) 
+           :channels (loop for channel in (list-channels (server connection))
                            when (permitted (type-of update) channel user)
                            collect (lichat-protocol:name channel)))))
 

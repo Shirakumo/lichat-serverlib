@@ -269,6 +269,11 @@ See FIND-USER")
 
 See USER")
 
+  (function list-users
+    "Return a fresh list of all known user objects for the server.
+
+See USER")
+
   (function find-profile
     "Accesses a profile by the given name-ish on the server.
 
@@ -288,6 +293,11 @@ See FIND-PROFILE")
 
 See PROFILE")
 
+  (function list-users
+    "Return a fresh list of all known profile objects for the server.
+
+See PROFILE")
+
   (function find-channel
     "Accesses a channel by the given name-ish on the server.
 
@@ -304,6 +314,11 @@ See FIND-CHANNEL")
 
   (function make-channel
     "Construct an appropriate channel object for the server.
+
+See CHANNEL")
+
+  (function list-channels
+    "Return a fresh list of all known channel objects for the server.
 
 See CHANNEL"))
 

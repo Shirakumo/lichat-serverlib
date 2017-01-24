@@ -49,12 +49,15 @@
    #:find-user
    #:remove-user
    #:make-user
+   #:list-users
    #:find-profile
    #:remove-profile
    #:make-profile
+   #:list-profiles
    #:find-channel
    #:remove-channel
-   #:make-channel)
+   #:make-channel
+   #:list-channels)
   ;; server-operations.lisp
   (:export
    #:prep-perms
