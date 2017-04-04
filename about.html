@@ -73,79 +73,79 @@
       }
       @media (max-width: 800px){
           body{font-size: 12pt;}
-      } </style> </head> <body> <header> <h1>lichat-serverlib</h1> <span class="version">1.0.0</span> <p class="description">Tools to help build a server using the lichat protocol.</p> </header> <main> <article id="documentation">  <div><h2>About Lichat-Serverlib</h2> <p>This is an implementation of the server-side protocol part of the <a href="https://shirakumo.org/projects/lichat-protocol">Lichat protocol</a>. It provides an extensible, transport-agnostic implementation that can be used to base a functional server on. All that the real server needs to take care of is the underlying connection establishment and reading.</p> <p>You do not need this library if you are looking to implement a client. You don't <em>need</em> it if you're looking to implement a server either, but it will take care of a large part of the implementation tasks for you if you do use it.</p> <h2>Implementing an Overarching Server</h2> <p>In order to implement an actual server, you will want to do the following:</p> <ul> <li>Subclass at least <code><a href="#LICHAT-SERVERLIB:SERVER">server</a></code> and <code><a href="#LICHAT-SERVERLIB:CONNECTION">connection</a></code>.</li> <li>Provide functions to start a listener on a server instance.</li> <li>For each client that connects, create a <code><a href="#LICHAT-SERVERLIB:CONNECTION">connection</a></code> object.</li> <li>Provide functions to repeatedly read updates from a <code><a href="#LICHAT-SERVERLIB:CONNECTION">connection</a></code> and send them to <code><a href="#LICHAT-SERVERLIB:PROCESS">process</a></code>.</li> <li>Supply a <code><a href="#LICHAT-SERVERLIB:CLOSE-CONNECTION">close-connection</a></code> restart that closes the connection to the client around the <code><a href="#LICHAT-SERVERLIB:PROCESS">process</a></code> calls.</li> <li>Provide a primary method for <code><a href="#LICHAT-SERVERLIB:SEND">send</a></code> specialised on your <code><a href="#LICHAT-SERVERLIB:CONNECTION">connection</a></code> subclass that handles the actual wire transmission of an update.</li> <li>Handle potential synchronisation or mutual-exclusion issues to users, channels, profiles, and connections on the server if your server is multi-threaded.</li> </ul> <p>For a simple illustrative example, see the <a href="https://shirakumo.org/projects/lichat-tcp-server">lichat-tcp-server</a>.</p> <h2>Also See</h2> <ul> <li><a href="https://shirakumo.github.io/lichat-protocol">lichat-protocol</a> The Lichat protocol specification.</li> <li><a href="https://shirakumo.github.io/lichat-tcp-server">lichat-tcp-server</a> A basic, threaded, TCP-based implementation of a Lichat server.</li> <li><a href="https://shirakumo.github.io/lichat-tcp-client">lichat-tcp-client</a> A basic, threaded, TCP-based implementation of a Lichat client.</li> <li><a href="https://github.com/Shirakumo/lionchat">LionChat</a> A Qt GUI client for a TCP server.</li> </ul> </div>  </article> <article id="copyright">  <h2>Copyright</h2> <span>lichat-serverlib</span> is licensed under the <span><a href="https://tldrlegal.com/search?q=Artistic">Artistic</a></span> license.  © <span>Nicolas Hafner &lt;shinmera@tymoon.eu&gt;</span> .  This library can be obtained on <a href="https://github.com/Shirakumo/lichat-serverlib">https://github.com/Shirakumo/lichat-serverlib</a>.  </article>  <article id="symbol-index"> <h2>Package Index</h2> <ul><li class="package"> <h3> <a name="LICHAT-SERVERLIB" href="#LICHAT-SERVERLIB">LICHAT-SERVERLIB</a> <span class="nicknames">(ORG.SHIRAKUMO.LICHAT.SERVERLIB)</span> </h3> <ul><li> <a name="LICHAT-SERVERLIB:CHANNEL"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHANNEL">CHANNEL</a></code></h4>  </header> <pre class="docstring">A server-side channel object.
+      } </style> </head> <body> <header> <h1>lichat-serverlib</h1> <span class="version">1.0.0</span> <p class="description">Tools to help build a server using the lichat protocol.</p> </header> <main> <article id="documentation">  <div><h2>About Lichat-Serverlib</h2> <p>This is an implementation of the server-side protocol part of the <a href="https://shirakumo.org/projects/lichat-protocol">Lichat protocol</a>. It provides an extensible, transport-agnostic implementation that can be used to base a functional server on. All that the real server needs to take care of is the underlying connection establishment and reading.</p> <p>You do not need this library if you are looking to implement a client. You don't <em>need</em> it if you're looking to implement a server either, but it will take care of a large part of the implementation tasks for you if you do use it.</p> <h2>Implementing an Overarching Server</h2> <p>In order to implement an actual server, you will want to do the following:</p> <ul> <li>Subclass at least <code><a href="#LICHAT-SERVERLIB:SERVER">server</a></code> and <code><a href="#LICHAT-SERVERLIB:CONNECTION">connection</a></code>.</li> <li>Provide functions to start a listener on a server instance.</li> <li>For each client that connects, create a <code><a href="#LICHAT-SERVERLIB:CONNECTION">connection</a></code> object.</li> <li>Provide functions to repeatedly read updates from a <code><a href="#LICHAT-SERVERLIB:CONNECTION">connection</a></code> and send them to <code><a href="#LICHAT-SERVERLIB:PROCESS">process</a></code>.</li> <li>Supply a <code><a href="#LICHAT-SERVERLIB:CLOSE-CONNECTION">close-connection</a></code> restart that closes the connection to the client around the <code><a href="#LICHAT-SERVERLIB:PROCESS">process</a></code> calls.</li> <li>Provide a primary method for <code><a href="#LICHAT-SERVERLIB:SEND">send</a></code> specialised on your <code><a href="#LICHAT-SERVERLIB:CONNECTION">connection</a></code> subclass that handles the actual wire transmission of an update.</li> <li>Handle potential synchronisation or mutual-exclusion issues to users, channels, profiles, and connections on the server if your server is multi-threaded.</li> </ul> <p>For a simple illustrative example, see the <a href="https://shirakumo.org/projects/lichat-tcp-server">lichat-tcp-server</a>.</p> <h2>Also See</h2> <ul> <li><a href="https://shirakumo.github.io/lichat-protocol">lichat-protocol</a> The Lichat protocol specification.</li> <li><a href="https://shirakumo.github.io/lichat-tcp-server">lichat-tcp-server</a> A basic, threaded, TCP-based implementation of a Lichat server.</li> <li><a href="https://shirakumo.github.io/lichat-tcp-client">lichat-tcp-client</a> A basic, threaded, TCP-based implementation of a Lichat client.</li> <li><a href="https://github.com/Shirakumo/lionchat">LionChat</a> A Qt GUI client for a TCP server.</li> </ul> </div>  </article> <article id="copyright">  <h2>Copyright</h2> <span>lichat-serverlib</span> is licensed under the <span><a href="https://tldrlegal.com/search?q=Artistic">Artistic</a></span> license.  © <span>Nicolas Hafner &lt;shinmera@tymoon.eu&gt;</span> .  This library can be obtained on <a href="https://github.com/Shirakumo/lichat-serverlib">https://github.com/Shirakumo/lichat-serverlib</a>.  </article>  <article id="symbol-index"> <h2>Package Index</h2> <ul><li class="package"> <h3> <a name="LICHAT-SERVERLIB" href="#LICHAT-SERVERLIB">LICHAT-SERVERLIB</a> <span class="nicknames">(ORG.SHIRAKUMO.LICHAT.SERVERLIB)</span> </h3> <ul><li> <a name="LICHAT-SERVERLIB:CHANNEL"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHANNEL">CHANNEL</a></code></h4>  </header> <div class="docstring"><pre>A server-side channel object.
 
-See LICHAT-PROTOCOL:CHANNEL
-See TIMEOUTABLE</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:CONNECTION"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:CONNECTION">CONNECTION</a></code></h4>  </header> <pre class="docstring">The representation of a client connection.
+See <a href="#LICHAT-SERVERLIB:CHANNEL">LICHAT-PROTOCOL:CHANNEL</a>
+See <a href="#LICHAT-SERVERLIB:TIMEOUTABLE">TIMEOUTABLE</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:CONNECTION"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:CONNECTION">CONNECTION</a></code></h4>  </header> <div class="docstring"><pre>The representation of a client connection.
 
-See SERVER
-See LAST-UPDATE
-See LICHAT-PROTOCOL:CONNECTION</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FLOOD-PROTECTED-CONNECTION"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:FLOOD-PROTECTED-CONNECTION">FLOOD-PROTECTED-CONNECTION</a></code></h4>  </header> <pre class="docstring">A connection with basic time-frame flood-protection.
+See <a href="#LICHAT-SERVERLIB:SERVER">SERVER</a>
+See <a href="#LICHAT-SERVERLIB:LAST-UPDATE">LAST-UPDATE</a>
+See <a href="#LICHAT-SERVERLIB:CONNECTION">LICHAT-PROTOCOL:CONNECTION</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FLOOD-PROTECTED-CONNECTION"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:FLOOD-PROTECTED-CONNECTION">FLOOD-PROTECTED-CONNECTION</a></code></h4>  </header> <div class="docstring"><pre>A connection with basic time-frame flood-protection.
 
-See CONNECTION
-See LAST-FRAME
-See FRAME-COUNT</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FLOOD-PROTECTED-SERVER"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:FLOOD-PROTECTED-SERVER">FLOOD-PROTECTED-SERVER</a></code></h4>  </header> <pre class="docstring">A server with basic time-frame flood-protection.
+See <a href="#LICHAT-SERVERLIB:CONNECTION">CONNECTION</a>
+See <a href="#LICHAT-SERVERLIB:LAST-FRAME">LAST-FRAME</a>
+See <a href="#LICHAT-SERVERLIB:FRAME-COUNT">FRAME-COUNT</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FLOOD-PROTECTED-SERVER"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:FLOOD-PROTECTED-SERVER">FLOOD-PROTECTED-SERVER</a></code></h4>  </header> <div class="docstring"><pre>A server with basic time-frame flood-protection.
 
-See SERVER
-See FLOOD-FRAME
-See FLOOD-LIMIT</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:PROFILE"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:PROFILE">PROFILE</a></code></h4>  </header> <pre class="docstring">A server-side profile object
+See <a href="#LICHAT-SERVERLIB:SERVER">SERVER</a>
+See <a href="#LICHAT-SERVERLIB:FLOOD-FRAME">FLOOD-FRAME</a>
+See <a href="#LICHAT-SERVERLIB:FLOOD-LIMIT">FLOOD-LIMIT</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:PROFILE"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:PROFILE">PROFILE</a></code></h4>  </header> <div class="docstring"><pre>A server-side profile object
 
-See LICHAT-PROTOCOL:PROFILE
-See TIMEOUTABLE</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:SERVER"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:SERVER">SERVER</a></code></h4>  </header> <pre class="docstring">An object representation of the server.
+See <a href="#LICHAT-SERVERLIB:PROFILE">LICHAT-PROTOCOL:PROFILE</a>
+See <a href="#LICHAT-SERVERLIB:TIMEOUTABLE">TIMEOUTABLE</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:SERVER"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:SERVER">SERVER</a></code></h4>  </header> <div class="docstring"><pre>An object representation of the server.
 
-See USER
-See USERS
-See PROFILES
-See CHANNELS
-See SALT
-See IDLE-TIMEOUT</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:TIMEOUTABLE"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:TIMEOUTABLE">TIMEOUTABLE</a></code></h4>  </header> <pre class="docstring">Superclass for objects that can be invalidated through a timeout.
+See <a href="#LICHAT-SERVERLIB:USER">USER</a>
+See <a href="#LICHAT-SERVERLIB:USERS">USERS</a>
+See <a href="#LICHAT-SERVERLIB:PROFILES">PROFILES</a>
+See <a href="#LICHAT-SERVERLIB:CHANNELS">CHANNELS</a>
+See <a href="#LICHAT-SERVERLIB:SALT">SALT</a>
+See <a href="#LICHAT-SERVERLIB:IDLE-TIMEOUT">IDLE-TIMEOUT</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:TIMEOUTABLE"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:TIMEOUTABLE">TIMEOUTABLE</a></code></h4>  </header> <div class="docstring"><pre>Superclass for objects that can be invalidated through a timeout.
 
-See TIMEOUT
-See START-TIMEOUT
-See RESET-TIMEOUT
-See ALIVE-P</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:USER"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:USER">USER</a></code></h4>  </header> <pre class="docstring">A server-side user object
+See <a href="#LICHAT-SERVERLIB:TIMEOUT">TIMEOUT</a>
+See <a href="#LICHAT-SERVERLIB:START-TIMEOUT">START-TIMEOUT</a>
+See <a href="#LICHAT-SERVERLIB:RESET-TIMEOUT">RESET-TIMEOUT</a>
+See <a href="#LICHAT-SERVERLIB:ALIVE-P">ALIVE-P</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:USER"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:USER">USER</a></code></h4>  </header> <div class="docstring"><pre>A server-side user object
 
-See LICHAT-PROTOCOL:USER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FAILURE-CONDITION"> </a> <article> <header class="condition"> <span class="type">condition</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:FAILURE-CONDITION">FAILURE-CONDITION</a></code></h4>  </header> <pre class="docstring">Wrapper condition to carry a failure update.
+See <a href="#LICHAT-SERVERLIB:USER">LICHAT-PROTOCOL:USER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FAILURE-CONDITION"> </a> <article> <header class="condition"> <span class="type">condition</span>  <h4 class="name"><code><a href="#LICHAT-SERVERLIB:FAILURE-CONDITION">FAILURE-CONDITION</a></code></h4>  </header> <div class="docstring"><pre>Wrapper condition to carry a failure update.
 
-See FAILURE-TYPE
-See FAILURE-ARGS
-See FAIL!</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:CHANNELS"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHANNELS">CHANNELS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">Accessor to the hash-table of channels that exist on the server.
+See <a href="#LICHAT-SERVERLIB:FAILURE-TYPE">FAILURE-TYPE</a>
+See <a href="#LICHAT-SERVERLIB:FAILURE-ARGS">FAILURE-ARGS</a>
+See <a href="#LICHAT-SERVERLIB:FAIL!">FAIL!</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:CHANNELS"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHANNELS">CHANNELS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>Accessor to the hash-table of channels that exist on the server.
 
-See SERVER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FIND-CHANNEL"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FIND-CHANNEL">FIND-CHANNEL</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <pre class="docstring">Accesses a channel by the given name-ish on the server.
+See <a href="#LICHAT-SERVERLIB:SERVER">SERVER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FIND-CHANNEL"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FIND-CHANNEL">FIND-CHANNEL</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <div class="docstring"><pre>Accesses a channel by the given name-ish on the server.
 
-See COERCE-CHANNELNAME
-See CHANNELS
-See REMOVE-CHANNEL</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FIND-PROFILE"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FIND-PROFILE">FIND-PROFILE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <pre class="docstring">Accesses a profile by the given name-ish on the server.
+See <a href="#LICHAT-SERVERLIB:COERCE-CHANNELNAME">COERCE-CHANNELNAME</a>
+See <a href="#LICHAT-SERVERLIB:CHANNELS">CHANNELS</a>
+See <a href="#LICHAT-SERVERLIB:REMOVE-CHANNEL">REMOVE-CHANNEL</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FIND-PROFILE"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FIND-PROFILE">FIND-PROFILE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <div class="docstring"><pre>Accesses a profile by the given name-ish on the server.
 
-See COERCE-USERNAME
-See PROFILES
-See REMOVE-PROFILE</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FIND-USER"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FIND-USER">FIND-USER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <pre class="docstring">Accesses a user by the given name-ish on the server.
+See <a href="#LICHAT-SERVERLIB:COERCE-USERNAME">COERCE-USERNAME</a>
+See <a href="#LICHAT-SERVERLIB:PROFILES">PROFILES</a>
+See <a href="#LICHAT-SERVERLIB:REMOVE-PROFILE">REMOVE-PROFILE</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FIND-USER"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FIND-USER">FIND-USER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <div class="docstring"><pre>Accesses a user by the given name-ish on the server.
 
-See COERCE-USERNAME
-See USERS
-See REMOVE-USER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FLOOD-FRAME"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FLOOD-FRAME">FLOOD-FRAME</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">Accessor to the number of seconds for which a flood frame lasts.
+See <a href="#LICHAT-SERVERLIB:COERCE-USERNAME">COERCE-USERNAME</a>
+See <a href="#LICHAT-SERVERLIB:USERS">USERS</a>
+See <a href="#LICHAT-SERVERLIB:REMOVE-USER">REMOVE-USER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FLOOD-FRAME"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FLOOD-FRAME">FLOOD-FRAME</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>Accessor to the number of seconds for which a flood frame lasts.
 
-See FLOOD-PROTECTED-SERVER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FLOOD-LIMIT"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FLOOD-LIMIT">FLOOD-LIMIT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">Accessor to the number of updates that can be received within a frame before the connection is limited.
+See <a href="#LICHAT-SERVERLIB:FLOOD-PROTECTED-SERVER">FLOOD-PROTECTED-SERVER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FLOOD-LIMIT"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FLOOD-LIMIT">FLOOD-LIMIT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>Accessor to the number of updates that can be received within a frame before the connection is limited.
 
-See FLOOD-PROTECTED-SERVER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FRAME-COUNT"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FRAME-COUNT">FRAME-COUNT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">Accessor to the number of updates that were processed within the last frame.
+See <a href="#LICHAT-SERVERLIB:FLOOD-PROTECTED-SERVER">FLOOD-PROTECTED-SERVER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FRAME-COUNT"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FRAME-COUNT">FRAME-COUNT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>Accessor to the number of updates that were processed within the last frame.
 
-See FLOOD-PROTECTED-CONNECTION</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:IDLE-TIMEOUT"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:IDLE-TIMEOUT">IDLE-TIMEOUT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">Accessor to the number of seconds a connection can be idle before it is considered timed out.
+See <a href="#LICHAT-SERVERLIB:FLOOD-PROTECTED-CONNECTION">FLOOD-PROTECTED-CONNECTION</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:IDLE-TIMEOUT"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:IDLE-TIMEOUT">IDLE-TIMEOUT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>Accessor to the number of seconds a connection can be idle before it is considered timed out.
 
-See SERVER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:LAST-FRAME"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:LAST-FRAME">LAST-FRAME</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">Accessor to the last frame number the connection handled.
+See <a href="#LICHAT-SERVERLIB:SERVER">SERVER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:LAST-FRAME"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:LAST-FRAME">LAST-FRAME</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>Accessor to the last frame number the connection handled.
 
-See FLOOD-PROTECTED-CONNECTION</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:LAST-UPDATE"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:LAST-UPDATE">LAST-UPDATE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">Accessor to the universal-time of when the last update was processed on the connection.
+See <a href="#LICHAT-SERVERLIB:FLOOD-PROTECTED-CONNECTION">FLOOD-PROTECTED-CONNECTION</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:LAST-UPDATE"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:LAST-UPDATE">LAST-UPDATE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>Accessor to the universal-time of when the last update was processed on the connection.
 
-See CONNECTION</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:PROFILES"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:PROFILES">PROFILES</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">Accessor to the hash-table of profiles that exist on the server.
+See <a href="#LICHAT-SERVERLIB:CONNECTION">CONNECTION</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:PROFILES"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:PROFILES">PROFILES</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>Accessor to the hash-table of profiles that exist on the server.
 
-See SERVER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:SALT"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:SALT">SALT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">Accessor to the password hashing salt.
+See <a href="#LICHAT-SERVERLIB:SERVER">SERVER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:SALT"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:SALT">SALT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>Accessor to the password hashing salt.
 
-See SERVER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:SERVER"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:SERVER">SERVER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">Accessor to the connection's server.
+See <a href="#LICHAT-SERVERLIB:SERVER">SERVER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:SERVER"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:SERVER">SERVER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>Accessor to the connection's server.
 
-See CONNECTION</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:TIMEOUT"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:TIMEOUT">TIMEOUT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">The universal-time by which the object will be invalidated, if any.
+See <a href="#LICHAT-SERVERLIB:CONNECTION">CONNECTION</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:TIMEOUT"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:TIMEOUT">TIMEOUT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>The universal-time by which the object will be invalidated, if any.
 
-See TIMEOUTABLE</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:USERS"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:USERS">USERS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring">Accessor to the hash-table of users that exist on the server.
+See <a href="#LICHAT-SERVERLIB:TIMEOUTABLE">TIMEOUTABLE</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:USERS"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:USERS">USERS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <div class="docstring"><pre>Accessor to the hash-table of users that exist on the server.
 
-See SERVER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:CHECK-CHANNEL"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHECK-CHANNEL">CHECK-CHANNEL</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE &amp;OPTIONAL (MUST-BE-IN T)</code><code>)</code>  </header> <pre class="docstring">Checks whether the CHANNEL field is a valid channel.
+See <a href="#LICHAT-SERVERLIB:SERVER">SERVER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:CHECK-CHANNEL"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHECK-CHANNEL">CHECK-CHANNEL</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE &amp;OPTIONAL (MUST-BE-IN T)</code><code>)</code>  </header> <div class="docstring"><pre>Checks whether the CHANNEL field is a valid channel.
 
 If the channel does not exist, a FAILURE-CONDITION for a
 LICHAT-PROTOCOL:NO-SUCH-CHANNEL failure is signalled. If it
@@ -156,9 +156,9 @@ returned.
 
 This is in accordance with §5.1.5 §5.4.2 §5.4.3 §5.4.4 §5.4.5
 
-See LICHAT-PROTOCOL:NO-SUCH-CHANNEL
-See LICHAT-PROTOCOL:NOT-IN-CHANNEL
-See FIND-CHANNEL</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:CHECK-CHANNELNAME"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHECK-CHANNELNAME">CHECK-CHANNELNAME</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE</code><code>)</code>  </header> <pre class="docstring">Checks whether the CHANNEL field has a valid, unused name.
+See <a href="NIL">LICHAT-PROTOCOL:NO-SUCH-CHANNEL</a>
+See <a href="NIL">LICHAT-PROTOCOL:NOT-IN-CHANNEL</a>
+See <a href="#LICHAT-SERVERLIB:FIND-CHANNEL">FIND-CHANNEL</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:CHECK-CHANNELNAME"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHECK-CHANNELNAME">CHECK-CHANNELNAME</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE</code><code>)</code>  </header> <div class="docstring"><pre>Checks whether the CHANNEL field has a valid, unused name.
 
 If the channel name is malformed, a FAILURE-CONDITION for
 a LICHAT-PROTOCOL:BAD-NAME failure is signalled. If it is
@@ -168,10 +168,10 @@ signalled.
 
 This is in accordance with §5.1.3 §5.3.2
 
-See LICHAT-PROTOCOL:BAD-NAME
-See LICHAT-PROTOCOL:CHANNELNAME-TAKEN
-See FIND-CHANNEL
-See LICHAT-PROTOCOL:CHANNELNAME-P</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:CHECK-FROM"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHECK-FROM">CHECK-FROM</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE</code><code>)</code>  </header> <pre class="docstring">Checks whether the FROM field matches the update.
+See <a href="NIL">LICHAT-PROTOCOL:BAD-NAME</a>
+See <a href="NIL">LICHAT-PROTOCOL:CHANNELNAME-TAKEN</a>
+See <a href="#LICHAT-SERVERLIB:FIND-CHANNEL">FIND-CHANNEL</a>
+See <a href="NIL">LICHAT-PROTOCOL:CHANNELNAME-P</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:CHECK-FROM"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHECK-FROM">CHECK-FROM</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE</code><code>)</code>  </header> <div class="docstring"><pre>Checks whether the FROM field matches the update.
 
 If it is not, a FAILURE-CONDITION for a LICHAT-PROTOCOL:
 USERNAME-MISMATCH failure is signalled. If it is, the
@@ -179,16 +179,16 @@ corresponding user object is returned.
 
 This is in accordance with §5.1.4
 
-See LICHAT-PROTOCOL:USERNAME-MISMATCH
-See FIND-USER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:CHECK-PERMITTED"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHECK-PERMITTED">CHECK-PERMITTED</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE &amp;OPTIONAL (CHANNEL (CHANNEL UPDATE))</code><code>)</code>  </header> <pre class="docstring">Checks whether the given update is permitted.
+See <a href="NIL">LICHAT-PROTOCOL:USERNAME-MISMATCH</a>
+See <a href="#LICHAT-SERVERLIB:FIND-USER">FIND-USER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:CHECK-PERMITTED"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHECK-PERMITTED">CHECK-PERMITTED</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE &amp;OPTIONAL (CHANNEL (CHANNEL UPDATE))</code><code>)</code>  </header> <div class="docstring"><pre>Checks whether the given update is permitted.
 
 If it is not, a FAILURE-CONDITION for a LICHAT-PROTOCOL:
 INSUFFICIENT-PERMISSIONS failure is signalled.
 
 This is in accordance with §5.1.7
 
-See PERMITTED
-See LICHAT-PROTOCOL:INSUFFICIENT-PERMISSIONS</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:CHECK-TARGET"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHECK-TARGET">CHECK-TARGET</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE</code><code>)</code>  </header> <pre class="docstring">Checks whether the TARGET field is a valid user.
+See <a href="#LICHAT-SERVERLIB:PERMITTED">PERMITTED</a>
+See <a href="NIL">LICHAT-PROTOCOL:INSUFFICIENT-PERMISSIONS</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:CHECK-TARGET"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CHECK-TARGET">CHECK-TARGET</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE</code><code>)</code>  </header> <div class="docstring"><pre>Checks whether the TARGET field is a valid user.
 
 If it is not, a FAILURE-CONDITION for a LICHAT-PROTOCOL:
 NO-SUCH-USER failure is signalled. If it is, the
@@ -196,27 +196,27 @@ corresponding user object is returned.
 
 This is in accordance with §5.1.6
 
-See LICHAT-PROTOCOL:NO-SUCH-USER
-See FIND-USER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:COERCE-CHANNELNAME"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:COERCE-CHANNELNAME">COERCE-CHANNELNAME</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME-ISH</code><code>)</code>  </header> <pre class="docstring">Attempt to coerce the name-ish to a channel name.
+See <a href="NIL">LICHAT-PROTOCOL:NO-SUCH-USER</a>
+See <a href="#LICHAT-SERVERLIB:FIND-USER">FIND-USER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:COERCE-CHANNELNAME"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:COERCE-CHANNELNAME">COERCE-CHANNELNAME</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME-ISH</code><code>)</code>  </header> <div class="docstring"><pre>Attempt to coerce the name-ish to a channel name.
 
 Valid types are:
 LICHAT-PROTOCOL:CHANNEL-UPDATE
 LICHAT-PROTOCOL:CHANNEL
-STRING</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:COERCE-USERNAME"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:COERCE-USERNAME">COERCE-USERNAME</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME-ISH</code><code>)</code>  </header> <pre class="docstring">Attempt to coerce the name-ish to a user name.
+STRING</pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:COERCE-USERNAME"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:COERCE-USERNAME">COERCE-USERNAME</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME-ISH</code><code>)</code>  </header> <div class="docstring"><pre>Attempt to coerce the name-ish to a user name.
 
 Valid types are:
 LICHAT-PROTOCOL:UPDATE
 LICHAT-PROTOCOL:USER
-STRING</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FAIL!"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FAIL!">FAIL!</a></code></h4> <code class="qualifiers"></code> <code class="arguments">TYPE-ISH &amp;REST INITARGS</code><code>)</code>  </header> <pre class="docstring">Signal a FAILURE-CONDITION that carries the designated failure and sends it off to the client.
+STRING</pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FAIL!"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FAIL!">FAIL!</a></code></h4> <code class="qualifiers"></code> <code class="arguments">TYPE-ISH &amp;REST INITARGS</code><code>)</code>  </header> <div class="docstring"><pre>Signal a FAILURE-CONDITION that carries the designated failure and sends it off to the client.
 
-See FAILURE-CONDITION</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:PERMITTED"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:PERMITTED">PERMITTED</a></code></h4> <code class="qualifiers"></code> <code class="arguments">ACTION CHANNEL USER</code><code>)</code>  </header> <pre class="docstring">Returns true if the action on the channel by the user is permitted.
+See <a href="#LICHAT-SERVERLIB:FAILURE-CONDITION">FAILURE-CONDITION</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:PERMITTED"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:PERMITTED">PERMITTED</a></code></h4> <code class="qualifiers"></code> <code class="arguments">ACTION CHANNEL USER</code><code>)</code>  </header> <div class="docstring"><pre>Returns true if the action on the channel by the user is permitted.
 
 Action should be the class-name of an update.
 
-See RULE-PERMITTED
-See LICHAT-PROTOCOL:PERMISSIONS</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:PREP-PERMS"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:PREP-PERMS">PREP-PERMS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">REGISTRANT PERMS</code><code>)</code>  </header> <pre class="docstring">Prepare the list of permissions rule for the registrant.</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:RULE-PERMITTED"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:RULE-PERMITTED">RULE-PERMITTED</a></code></h4> <code class="qualifiers"></code> <code class="arguments">RULE NAME</code><code>)</code>  </header> <pre class="docstring">Checks whether the given rule allows the user of the given name access.
+See <a href="#LICHAT-SERVERLIB:RULE-PERMITTED">RULE-PERMITTED</a>
+See <a href="NIL">LICHAT-PROTOCOL:PERMISSIONS</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:PREP-PERMS"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:PREP-PERMS">PREP-PERMS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">REGISTRANT PERMS</code><code>)</code>  </header> <div class="docstring"><pre>Prepare the list of permissions rule for the registrant.</pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:RULE-PERMITTED"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:RULE-PERMITTED">RULE-PERMITTED</a></code></h4> <code class="qualifiers"></code> <code class="arguments">RULE NAME</code><code>)</code>  </header> <div class="docstring"><pre>Checks whether the given rule allows the user of the given name access.
 
-The rule evaluation is implemented according to §2.5</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:SEND!"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:SEND!">SEND!</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION TYPE-ISH &amp;REST INITARGS</code><code>)</code>  </header> <pre class="docstring">Convenience function to send an update to a connection.
+The rule evaluation is implemented according to §2.5</pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:SEND!"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:SEND!">SEND!</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION TYPE-ISH &amp;REST INITARGS</code><code>)</code>  </header> <div class="docstring"><pre>Convenience function to send an update to a connection.
 
 Specifically, this will:
  * Coerce the type-ish to a protocol type by looking the symbol
@@ -224,7 +224,7 @@ Specifically, this will:
  * Add the :FROM initarg if it does not yet exist by using the
    connection's server's name.
 
-See SEND</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:ALIVE-P"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:ALIVE-P">ALIVE-P</a></code></h4> <code class="qualifiers"></code> <code class="arguments">TIMEOUTABLE</code><code>)</code>  </header> <pre class="docstring">Returns T if the object is still considered to be alive.</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:CREATE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CREATE">CREATE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">REGISTRANT NAME SERVER</code><code>)</code>  </header> <pre class="docstring">Creates an appropriate channel object for the registrant on the server.
+See <a href="#LICHAT-SERVERLIB:SEND">SEND</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:ALIVE-P"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:ALIVE-P">ALIVE-P</a></code></h4> <code class="qualifiers"></code> <code class="arguments">TIMEOUTABLE</code><code>)</code>  </header> <div class="docstring"><pre>Returns T if the object is still considered to be alive.</pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:CREATE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:CREATE">CREATE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">REGISTRANT NAME SERVER</code><code>)</code>  </header> <div class="docstring"><pre>Creates an appropriate channel object for the registrant on the server.
 
 If NAME is NIL, a random ID with an @ prefix is chosen
 that does not already exist on the server.
@@ -238,23 +238,23 @@ Note that this will /not/ check whether a channel of the
 given name already exists and will instead just replace
 it.
 
-See PREP-PERMS
-See LICHAT-PROTOCOL:CREATE
-See MAKE-CHANNEL
-See FIND-CHANNEL
-See LICHAT-PROTOCOL:*DEFAULT-ANONYMOUS-CHANNEL-PERMISSIONS*
-See LICHAT-PROTOCOL:*DEFAULT-PRIMARY-CHANNEL-PERMISSIONS*
-See LICHAT-PROTOCOL:*DEFAULT-REGULAR-CHANNEL-PERMISSIONS*</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FAILURE-ARGS"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FAILURE-ARGS">FAILURE-ARGS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONDITION</code><code>)</code>  </header> <pre class="docstring">The initargs of the failure update that should be constructed to relay this error to the client.
+See <a href="#LICHAT-SERVERLIB:PREP-PERMS">PREP-PERMS</a>
+See <a href="#LICHAT-SERVERLIB:CREATE">LICHAT-PROTOCOL:CREATE</a>
+See <a href="#LICHAT-SERVERLIB:MAKE-CHANNEL">MAKE-CHANNEL</a>
+See <a href="#LICHAT-SERVERLIB:FIND-CHANNEL">FIND-CHANNEL</a>
+See <a href="NIL">LICHAT-PROTOCOL:*DEFAULT-ANONYMOUS-CHANNEL-PERMISSIONS*</a>
+See <a href="NIL">LICHAT-PROTOCOL:*DEFAULT-PRIMARY-CHANNEL-PERMISSIONS*</a>
+See <a href="NIL">LICHAT-PROTOCOL:*DEFAULT-REGULAR-CHANNEL-PERMISSIONS*</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FAILURE-ARGS"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FAILURE-ARGS">FAILURE-ARGS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONDITION</code><code>)</code>  </header> <div class="docstring"><pre>The initargs of the failure update that should be constructed to relay this error to the client.
 
-See FAILURE-CONDITION</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:FAILURE-TYPE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FAILURE-TYPE">FAILURE-TYPE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONDITION</code><code>)</code>  </header> <pre class="docstring">The type of the failure update that should be constructed to relay this error to the client.
+See <a href="#LICHAT-SERVERLIB:FAILURE-CONDITION">FAILURE-CONDITION</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:FAILURE-TYPE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:FAILURE-TYPE">FAILURE-TYPE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONDITION</code><code>)</code>  </header> <div class="docstring"><pre>The type of the failure update that should be constructed to relay this error to the client.
 
-See FAILURE-CONDITION</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:INIT-CONNECTION"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:INIT-CONNECTION">INIT-CONNECTION</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE</code><code>)</code>  </header> <pre class="docstring">Registers the connection on the server and prepares it for use.
+See <a href="#LICHAT-SERVERLIB:FAILURE-CONDITION">FAILURE-CONDITION</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:INIT-CONNECTION"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:INIT-CONNECTION">INIT-CONNECTION</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION UPDATE</code><code>)</code>  </header> <div class="docstring"><pre>Registers the connection on the server and prepares it for use.
 
 This corresponds to §4.1.8 to §4.1.12 with the additional
 act that a related profile's timeout is reset, if such a
 profile is found.
 
-See RESET-TIMEOUT</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:JOIN"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:JOIN">JOIN</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CHANNEL USER &amp;OPTIONAL ID</code><code>)</code>  </header> <pre class="docstring">Join a user to a channel.
+See <a href="#LICHAT-SERVERLIB:RESET-TIMEOUT">RESET-TIMEOUT</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:JOIN"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:JOIN">JOIN</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CHANNEL USER &amp;OPTIONAL ID</code><code>)</code>  </header> <div class="docstring"><pre>Join a user to a channel.
 
 Note that this will /not/ check whether the user is already
 in the channel or not and will just join them regardless.
@@ -264,9 +264,9 @@ given ID, or a fresh one if none is given.
 
 The channel's timeout is reset.
 
-See LICHAT-PROTOCOL:JOIN
-See LICHAT-PROTOCOL:NEXT-ID
-See RESET-TIMEOUT</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:LEAVE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:LEAVE">LEAVE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CHANNEL USER &amp;OPTIONAL ID</code><code>)</code>  </header> <pre class="docstring">Leave a user from a channel.
+See <a href="#LICHAT-SERVERLIB:JOIN">LICHAT-PROTOCOL:JOIN</a>
+See <a href="NIL">LICHAT-PROTOCOL:NEXT-ID</a>
+See <a href="#LICHAT-SERVERLIB:RESET-TIMEOUT">RESET-TIMEOUT</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:LEAVE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:LEAVE">LEAVE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CHANNEL USER &amp;OPTIONAL ID</code><code>)</code>  </header> <div class="docstring"><pre>Leave a user from a channel.
 
 Note that this will /not/ check whether the user actually
 is in the channel or not and will just leave them regardless.
@@ -276,20 +276,24 @@ given ID, or a fresh one if none is given.
 
 If no users remain, the channel's timeout is started.
 
-See LICHAT-PROTOCOL:LEAVE
-See LICHAT-PROTOCOL:NEXT-ID
-See START-TIMEOUT</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:MAKE-CHANNEL"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:MAKE-CHANNEL">MAKE-CHANNEL</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SERVER &amp;REST INITARGS</code><code>)</code>  </header> <pre class="docstring">Construct an appropriate channel object for the server.
+See <a href="#LICHAT-SERVERLIB:LEAVE">LICHAT-PROTOCOL:LEAVE</a>
+See <a href="NIL">LICHAT-PROTOCOL:NEXT-ID</a>
+See <a href="#LICHAT-SERVERLIB:START-TIMEOUT">START-TIMEOUT</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:LIST-CHANNELS"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:LIST-CHANNELS">LIST-CHANNELS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SERVER</code><code>)</code>  </header> <div class="docstring"><pre>Return a fresh list of all known channel objects for the server.
 
-See CHANNEL</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:MAKE-CONNECTION"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:MAKE-CONNECTION">MAKE-CONNECTION</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SERVER &amp;REST INITARGS</code><code>)</code>  </header> <pre class="docstring">Construct an appropriate connection object for the server.
+See <a href="#LICHAT-SERVERLIB:CHANNEL">CHANNEL</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:LIST-PROFILES"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:LIST-PROFILES">LIST-PROFILES</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SERVER</code><code>)</code>  </header> <div class="docstring"><i>No docstring provided.</i></div> </article> </li><li> <a name="LICHAT-SERVERLIB:LIST-USERS"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:LIST-USERS">LIST-USERS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SERVER</code><code>)</code>  </header> <div class="docstring"><pre>Return a fresh list of all known profile objects for the server.
 
-See CONNECTION</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:MAKE-PROFILE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:MAKE-PROFILE">MAKE-PROFILE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SERVER &amp;REST INITARGS</code><code>)</code>  </header> <pre class="docstring">Construct an appropriate user object for the server.
+See <a href="#LICHAT-SERVERLIB:PROFILE">PROFILE</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:MAKE-CHANNEL"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:MAKE-CHANNEL">MAKE-CHANNEL</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SERVER &amp;REST INITARGS</code><code>)</code>  </header> <div class="docstring"><pre>Construct an appropriate channel object for the server.
 
-See PROFILE</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:MAKE-USER"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:MAKE-USER">MAKE-USER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SERVER &amp;REST INITARGS</code><code>)</code>  </header> <pre class="docstring">Construct an appropriate user object for the server.
+See <a href="#LICHAT-SERVERLIB:CHANNEL">CHANNEL</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:MAKE-CONNECTION"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:MAKE-CONNECTION">MAKE-CONNECTION</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SERVER &amp;REST INITARGS</code><code>)</code>  </header> <div class="docstring"><pre>Construct an appropriate connection object for the server.
 
-See USER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:PASS-FLOOD-GATE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:PASS-FLOOD-GATE">PASS-FLOOD-GATE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION</code><code>)</code>  </header> <pre class="docstring">Updates flood information for the connection and returns whether the connection is fine or not.
+See <a href="#LICHAT-SERVERLIB:CONNECTION">CONNECTION</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:MAKE-PROFILE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:MAKE-PROFILE">MAKE-PROFILE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SERVER &amp;REST INITARGS</code><code>)</code>  </header> <div class="docstring"><pre>Construct an appropriate user object for the server.
 
-See FLOOD-PROTECTED-CONNECTION
-See PROCESS</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:PROCESS"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:PROCESS">PROCESS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION STREAM</code><code>)</code>  </header> <pre class="docstring">Process an update source on a connection.
+See <a href="#LICHAT-SERVERLIB:PROFILE">PROFILE</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:MAKE-USER"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:MAKE-USER">MAKE-USER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SERVER &amp;REST INITARGS</code><code>)</code>  </header> <div class="docstring"><pre>Construct an appropriate user object for the server.
+
+See <a href="#LICHAT-SERVERLIB:USER">USER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:PASS-FLOOD-GATE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:PASS-FLOOD-GATE">PASS-FLOOD-GATE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION</code><code>)</code>  </header> <div class="docstring"><pre>Updates flood information for the connection and returns whether the connection is fine or not.
+
+See <a href="#LICHAT-SERVERLIB:FLOOD-PROTECTED-CONNECTION">FLOOD-PROTECTED-CONNECTION</a>
+See <a href="#LICHAT-SERVERLIB:PROCESS">PROCESS</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:PROCESS"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:PROCESS">PROCESS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION STREAM</code><code>)</code>  </header> <div class="docstring"><pre>Process an update source on a connection.
 
 Sources that are accepted:
  * STREAM                 -- An update is read from the stream
@@ -315,32 +319,32 @@ CONNECTION around the PROCESS method, or around all calls of it.
 When this restart is invoked, the server must close the underlying
 connection.
 
-See LICHAT-PROTOCOL:FROM-WIRE
-See LICHAT-PROTOCOL:PROTOCOL-CONDITION
-See LICHAT-PROTOCOL:UPDATE-FAILURE
-See FAILURE-CONDITION</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:REGISTER"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:REGISTER">REGISTER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">REGISTRANT PASSWORD SERVER</code><code>)</code>  </header> <pre class="docstring">Register a user profile.
+See <a href="NIL">LICHAT-PROTOCOL:FROM-WIRE</a>
+See <a href="NIL">LICHAT-PROTOCOL:PROTOCOL-CONDITION</a>
+See <a href="NIL">LICHAT-PROTOCOL:UPDATE-FAILURE</a>
+See <a href="#LICHAT-SERVERLIB:FAILURE-CONDITION">FAILURE-CONDITION</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:REGISTER"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:REGISTER">REGISTER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">REGISTRANT PASSWORD SERVER</code><code>)</code>  </header> <div class="docstring"><pre>Register a user profile.
 
 Note that this will /not/ check whether the associated user
 actually exists on the server or not and will just create
 the profile regardless.
 
-See FIND-PROFILE
-See MAKE-PROFILE
-See LICHAT-PROTOCOL:REGISTER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:REMOVE-CHANNEL"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:REMOVE-CHANNEL">REMOVE-CHANNEL</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <pre class="docstring">Removes the channel by the given name from the server.
+See <a href="#LICHAT-SERVERLIB:FIND-PROFILE">FIND-PROFILE</a>
+See <a href="#LICHAT-SERVERLIB:MAKE-PROFILE">MAKE-PROFILE</a>
+See <a href="#LICHAT-SERVERLIB:REGISTER">LICHAT-PROTOCOL:REGISTER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:REMOVE-CHANNEL"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:REMOVE-CHANNEL">REMOVE-CHANNEL</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <div class="docstring"><pre>Removes the channel by the given name from the server.
 
-See COERCE-CHANNELNAME
-See CHANNELS
-See FIND-CHANNEL</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:REMOVE-PROFILE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:REMOVE-PROFILE">REMOVE-PROFILE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <pre class="docstring">Removes the profile by the given name-ish from the server.
+See <a href="#LICHAT-SERVERLIB:COERCE-CHANNELNAME">COERCE-CHANNELNAME</a>
+See <a href="#LICHAT-SERVERLIB:CHANNELS">CHANNELS</a>
+See <a href="#LICHAT-SERVERLIB:FIND-CHANNEL">FIND-CHANNEL</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:REMOVE-PROFILE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:REMOVE-PROFILE">REMOVE-PROFILE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <div class="docstring"><pre>Removes the profile by the given name-ish from the server.
 
-See COERCE-USERNAME
-See PROFILES
-See FIND-PROFILE</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:REMOVE-USER"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:REMOVE-USER">REMOVE-USER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <pre class="docstring">Removes the user by the given name-ish from the server.
+See <a href="#LICHAT-SERVERLIB:COERCE-USERNAME">COERCE-USERNAME</a>
+See <a href="#LICHAT-SERVERLIB:PROFILES">PROFILES</a>
+See <a href="#LICHAT-SERVERLIB:FIND-PROFILE">FIND-PROFILE</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:REMOVE-USER"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:REMOVE-USER">REMOVE-USER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">NAME SERVER</code><code>)</code>  </header> <div class="docstring"><pre>Removes the user by the given name-ish from the server.
 
-See COERCE-USERNAME
-See USERS
-See FIND-USER</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:RESET-TIMEOUT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:RESET-TIMEOUT">RESET-TIMEOUT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">TIMEOUTABLE</code><code>)</code>  </header> <pre class="docstring">Resets the timeout to never occur.
+See <a href="#LICHAT-SERVERLIB:COERCE-USERNAME">COERCE-USERNAME</a>
+See <a href="#LICHAT-SERVERLIB:USERS">USERS</a>
+See <a href="#LICHAT-SERVERLIB:FIND-USER">FIND-USER</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:RESET-TIMEOUT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:RESET-TIMEOUT">RESET-TIMEOUT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">TIMEOUTABLE</code><code>)</code>  </header> <div class="docstring"><pre>Resets the timeout to never occur.
 
-See TIMEOUTABLE</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:SEND"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:SEND">SEND</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT CONNECTION</code><code>)</code>  </header> <pre class="docstring">Send an update to a place.
+See <a href="#LICHAT-SERVERLIB:TIMEOUTABLE">TIMEOUTABLE</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:SEND"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:SEND">SEND</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT CONNECTION</code><code>)</code>  </header> <div class="docstring"><pre>Send an update to a place.
 
 Places that are accepted:
  * CONNECTION -- Directly sends the update over the wire. Note
@@ -353,22 +357,22 @@ This function has to be called in a regular interval by the
 overarching server. It will take care of handling connection
 timeouts and will close the connection in case of one.
 
-See CONNECTION
-See USER
-See CHANNEL</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:START-TIMEOUT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:START-TIMEOUT">START-TIMEOUT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">TIMEOUTABLE</code><code>)</code>  </header> <pre class="docstring">Starts the timeout by setting the object's TIMEOUT slot to the correct time.
+See <a href="#LICHAT-SERVERLIB:CONNECTION">CONNECTION</a>
+See <a href="#LICHAT-SERVERLIB:USER">USER</a>
+See <a href="#LICHAT-SERVERLIB:CHANNEL">CHANNEL</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:START-TIMEOUT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:START-TIMEOUT">START-TIMEOUT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">TIMEOUTABLE</code><code>)</code>  </header> <div class="docstring"><pre>Starts the timeout by setting the object's TIMEOUT slot to the correct time.
 
-See TIMEOUTABLE
-See LICHAT-PROTOCOL:LIFETIME</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:TEARDOWN-CONNECTION"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:TEARDOWN-CONNECTION">TEARDOWN-CONNECTION</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION</code><code>)</code>  </header> <pre class="docstring">Removes and cleans up the connection on the server.
+See <a href="#LICHAT-SERVERLIB:TIMEOUTABLE">TIMEOUTABLE</a>
+See <a href="NIL">LICHAT-PROTOCOL:LIFETIME</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:TEARDOWN-CONNECTION"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:TEARDOWN-CONNECTION">TEARDOWN-CONNECTION</a></code></h4> <code class="qualifiers"></code> <code class="arguments">CONNECTION</code><code>)</code>  </header> <div class="docstring"><pre>Removes and cleans up the connection on the server.
 
 This corresponds to §4.3.3 to §4.3.4 with the additional
 act that a related profile's timeout is started, if such a
 profile is found.
 
-See START-TIMEOUT</pre> </article> </li><li> <a name="LICHAT-SERVERLIB:DEFINE-UPDATE-HANDLER"> </a> <article> <header class="macro"> <span class="type">macro</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:DEFINE-UPDATE-HANDLER">DEFINE-UPDATE-HANDLER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">&amp;REST ARGS</code><code>)</code>  </header> <pre class="docstring">Easy wrapper to define a handler method for an update on a connection.
+See <a href="#LICHAT-SERVERLIB:START-TIMEOUT">START-TIMEOUT</a></pre></div> </article> </li><li> <a name="LICHAT-SERVERLIB:DEFINE-UPDATE-HANDLER"> </a> <article> <header class="macro"> <span class="type">macro</span>  <code>(</code><h4 class="name"><code><a href="#LICHAT-SERVERLIB:DEFINE-UPDATE-HANDLER">DEFINE-UPDATE-HANDLER</a></code></h4> <code class="qualifiers"></code> <code class="arguments">TYPE (CONNECTION UPDATE) &amp;BODY BODY</code><code>)</code>  </header> <div class="docstring"><pre>Easy wrapper to define a handler method for an update on a connection.
 
 UPDATE is coerced to a symbol found in the LICHAT-PROTOCOL
 package.
 
 This creates a PROCESS method.
 
-See PROCESS</pre> </article> </li></ul> </li></ul> </article>  </main> </body> </html> 
+See <a href="#LICHAT-SERVERLIB:PROCESS">PROCESS</a></pre></div> </article> </li></ul> </li></ul> </article>  </main> </body> </html> 
