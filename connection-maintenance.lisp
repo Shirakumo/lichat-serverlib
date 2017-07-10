@@ -12,8 +12,14 @@
   (:report (lambda (c s) (format s "Failure: (~a ~{~s~^ ~})"
                                  (failure-type c) (failure-args c)))))
 
+(define-condition severe-failure-condition (failure-condition)
+  ())
+
 (defun fail! (type-ish &rest initargs)
   (error 'failure-condition :type type-ish :args initargs))
+
+(defun fail!! (type-ish &rest initargs)
+  (error 'severe-failure-condition :type type-ish :args initargs))
 
 (defun send! (connection type-ish &rest initargs)
   (unless (getf initargs :from)
@@ -100,6 +106,10 @@
   (restart-case
       (handler-case
           (call-next-method)
+        (severe-failure-condition (err)
+          (apply #'send! connection (failure-type err) (failure-args err))
+          (teardown-connection connection)
+          (invoke-restart 'close-connection))
         (failure-condition (err)
           (apply #'send! connection (failure-type err) (failure-args err)))
         (lichat-protocol:protocol-condition (err)

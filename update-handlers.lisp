@@ -12,30 +12,30 @@
 
 (define-update-handler connect (connection update)
   (unless (lichat-protocol:username-p (lichat-protocol:from update))
-    (fail! 'lichat-protocol:bad-name :update-id (lichat-protocol:id update)))
+    (fail!! 'lichat-protocol:bad-name :update-id (lichat-protocol:id update)))
   (cond ((string/= (lichat-protocol:version update)
                    (lichat-protocol:protocol-version))
-         (fail! 'lichat-protocol:incompatible-version
-                :update-id (lichat-protocol:id update)
-                :compatible-versions (list (lichat-protocol:protocol-version))))
+         (fail!! 'lichat-protocol:incompatible-version
+                 :update-id (lichat-protocol:id update)
+                 :compatible-versions (list (lichat-protocol:protocol-version))))
         ((lichat-protocol:password update)
          (let ((profile (find-profile update (server connection))))
            (cond ((not profile)
-                  (fail! 'lichat-protocol:no-such-profile
-                         :update-id (lichat-protocol:id update)))
+                  (fail!! 'lichat-protocol:no-such-profile
+                          :update-id (lichat-protocol:id update)))
                  ((string/= (cryptos:pbkdf2-hash (lichat-protocol:password update)
                                                  (salt (server connection)))
                             (lichat-protocol:password profile))
-                  (fail! 'lichat-protocol:invalid-password
-                         :update-id (lichat-protocol:id update)))
+                  (fail!! 'lichat-protocol:invalid-password
+                          :update-id (lichat-protocol:id update)))
                  (T
                   (init-connection connection update)))))
         ((find-user update (server connection))
-         (fail! 'lichat-protocol:username-taken
-                :update-id (lichat-protocol:id update)))
+         (fail!! 'lichat-protocol:username-taken
+                 :update-id (lichat-protocol:id update)))
         ((find-profile update (server connection))
-         (fail! 'lichat-protocol:username-taken
-                :update-id (lichat-protocol:id update)))
+         (fail!! 'lichat-protocol:username-taken
+                 :update-id (lichat-protocol:id update)))
         (T
          (init-connection connection update))))
 
