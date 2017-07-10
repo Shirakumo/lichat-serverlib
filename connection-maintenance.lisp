@@ -103,6 +103,8 @@
 
 (defmethod process :around ((connection connection) (update lichat-protocol:update))
   (setf (last-update connection) (get-universal-time))
+  ;; FIXME: handle timestamp difference. For now we just force server time.
+  (setf (lichat-protocol:clock update) (get-universal-time))
   (restart-case
       (handler-case
           (call-next-method)
