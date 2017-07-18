@@ -108,11 +108,11 @@
       (setf (lichat-protocol:connections user)
             (remove connection (lichat-protocol:connections user)))
       (unless (lichat-protocol:connections user)
+        (remove-user user (server connection))
         (dolist (channel (lichat-protocol:channels user))
           (leave channel user))
         (let ((profile (find-profile (lichat-protocol:name user) (server connection))))
-          (when profile (start-timeout profile)))
-        (remove-user user (server connection))))))
+          (when profile (start-timeout profile)))))))
 
 (defun check-permitted (connection update &optional (channel (lichat-protocol:channel update)))
   (unless (permitted (type-of update) (find-channel channel (server connection))
