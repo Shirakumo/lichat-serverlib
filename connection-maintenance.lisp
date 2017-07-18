@@ -91,6 +91,11 @@
     (handler-case
         (setf message (lichat-protocol:from-wire stream))
       (lichat-protocol:wire-condition (err)
+        ;; Consume until terminating Nul found or end reached.
+        ;; This is to attempt to correct a malformed update and
+        ;; fix the stream to be able to read the next update.
+        (loop for char = (read-char stream NIL)
+              until (or (not char) (char= #\Nul char)))
         (send! connection 'malformed-update
                :text (princ-to-string err))))
     (when (typep message 'lichat-protocol:wire-object)
