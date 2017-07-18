@@ -71,7 +71,7 @@
   (let ((user (check-from connection update))
         (channel (check-channel connection update)))
     (check-permitted connection update)
-    (leave channel user (lichat-protocol:id update))))
+    (leave channel user :id (lichat-protocol:id update))))
 
 (define-update-handler channels (connection update)
   (let ((user (find-user (lichat-protocol:from update) (server connection))))

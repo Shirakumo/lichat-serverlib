@@ -389,6 +389,10 @@ given ID, or a fresh one if none is given.
 
 If no users remain, the channel's timeout is started.
 
+If NOTIFY-SELF is NIL, the LEAVE update is sent to every
+channel inhabitant other than the user leaving. Otherwise,
+the update is sent to everyone including the one leaving.
+
 See LICHAT-PROTOCOL:LEAVE
 See LICHAT-PROTOCOL:NEXT-ID
 See START-TIMEOUT")
