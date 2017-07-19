@@ -86,12 +86,10 @@
          (server (server connection))
          (user (find-user username server))
          (user-already-there user))
-    (cond (user-already-there
-           (setf (lichat-protocol:user connection) user))
-          (T
-           (setf user (make-user server :name username))
-           (setf (find-user username server) user)
-           (setf (lichat-protocol:user connection) user)))
+    (unless user-already-there
+      (setf user (make-user server :name username))
+      (setf (find-user username server) user))
+    (setf (lichat-protocol:user connection) user)
     (pushnew connection (lichat-protocol:connections user))
     (when (find-profile user server)
       (reset-timeout (find-profile user server)))
