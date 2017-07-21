@@ -41,8 +41,7 @@
 
 (define-update-handler disconnect (connection update)
   (send update connection)
-  (teardown-connection connection)
-  (invoke-restart 'close-connection))
+  (teardown-connection connection))
 
 (define-update-handler ping (connection update)
   ;; Do something with the timing.

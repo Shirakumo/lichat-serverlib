@@ -10,7 +10,7 @@ In order to implement an actual server, you will want to do the following:
 * Provide functions to start a listener on a server instance.
 * For each client that connects, create a `connection` object.
 * Provide functions to repeatedly read updates from a `connection` and send them to `process`.
-* Supply a  `close-connection` restart that closes the connection to the client around the `process` calls.
+* Supply an after method on `teardown-connection` that closes the connection to the client properly.
 * Provide a primary method for `send` specialised on your `connection` subclass that handles the actual wire transmission of an update.
 * Handle potential synchronisation or mutual-exclusion issues to users, channels, profiles, and connections on the server if your server is multi-threaded.
 

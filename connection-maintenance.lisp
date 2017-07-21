@@ -55,8 +55,7 @@
                 :text (format NIL "Ping idle-timeout of ~d second~:p reached."
                               (idle-timeout (server connection))))
          (send! connection 'disconnect)
-         (teardown-connection connection)
-         (invoke-restart 'close-connection))))
+         (teardown-connection connection))))
 
 (defmethod send ((object lichat-protocol:wire-object) (channel channel))
   (dolist (user (lichat-protocol:users channel))
@@ -116,8 +115,7 @@
         (severe-failure-condition (err)
           (apply #'send! connection (failure-type err) (failure-args err))
           (send! connection 'disconnect)
-          (teardown-connection connection)
-          (invoke-restart 'close-connection))
+          (teardown-connection connection))
         (failure-condition (err)
           (apply #'send! connection (failure-type err) (failure-args err)))
         (lichat-protocol:protocol-condition (err)

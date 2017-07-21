@@ -76,5 +76,4 @@
    #:check-channelname)
   ;; update-handlers.lisp
   (:export
-   #:define-update-handler
-   #:close-connection))
+   #:define-update-handler))
