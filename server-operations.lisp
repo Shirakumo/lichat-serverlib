@@ -105,6 +105,7 @@
 
 (defmethod teardown-connection ((connection connection))
   (let ((user (lichat-protocol:user connection)))
+    (setf (lichat-protocol:user connection) NIL)
     (when user
       (setf (lichat-protocol:connections user)
             (remove connection (lichat-protocol:connections user)))
