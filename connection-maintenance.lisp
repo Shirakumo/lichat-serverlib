@@ -115,6 +115,7 @@
           (call-next-method)
         (severe-failure-condition (err)
           (apply #'send! connection (failure-type err) (failure-args err))
+          (send! connection 'disconnect)
           (teardown-connection connection)
           (invoke-restart 'close-connection))
         (failure-condition (err)

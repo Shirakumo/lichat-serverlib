@@ -40,8 +40,8 @@
          (init-connection connection update))))
 
 (define-update-handler disconnect (connection update)
+  (send update connection)
   (teardown-connection connection)
-  (ignore-errors (send update connection))
   (invoke-restart 'close-connection))
 
 (define-update-handler ping (connection update)
