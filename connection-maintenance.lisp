@@ -41,21 +41,23 @@
                  ,conn)))
       whole))
 
+(defmethod check-connection-timeout ((connection connection))
+  (when (< (idle-timeout (server connection))
+           (- (get-universal-time) (last-update connection)))
+    ;; Avoid infinite recursion by updating. Doesn't matter since we're closing
+    ;; down anyway.
+    (setf (last-update connection) (get-universal-time))
+    (send! connection 'connection-unstable
+           :text (format NIL "Ping idle-timeout of ~d second~:p reached."
+                         (idle-timeout (server connection))))
+    (send! connection 'disconnect)
+    (teardown-connection connection)
+    (error "Connection has timed out.")))
+
 ;; We handle the timeout here because the protocol specifies that the server has to
 ;; regularly send out a ping request, meaning SEND will be called regularly too.
-(defmethod send :around ((object lichat-protocol:wire-object) (connection connection))
-  (cond ((< (- (get-universal-time) (last-update connection))
-            (idle-timeout (server connection)))
-         (call-next-method))
-        (T
-         ;; Avoid infinite recursion by updating. Doesn't matter since we're closing
-         ;; down anyway.
-         (setf (last-update connection) (get-universal-time))
-         (send! connection 'connection-unstable
-                :text (format NIL "Ping idle-timeout of ~d second~:p reached."
-                              (idle-timeout (server connection))))
-         (send! connection 'disconnect)
-         (teardown-connection connection))))
+(defmethod send :before ((object lichat-protocol:wire-object) (connection connection))
+  (check-connection-timeout connection))
 
 (defmethod send ((object lichat-protocol:wire-object) (channel channel))
   (dolist (user (lichat-protocol:users channel))
@@ -95,8 +97,7 @@
         ;; fix the stream to be able to read the next update.
         (loop for char = (read-char stream NIL)
               until (or (not char) (char= #\Nul char)))
-        (send! connection 'malformed-update
-               :text (princ-to-string err))))
+        (send! connection 'malformed-update :text (princ-to-string err))))
     (when (typep message 'lichat-protocol:wire-object)
       (process connection message))
     message))

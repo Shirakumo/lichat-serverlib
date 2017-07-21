@@ -17,6 +17,7 @@
    #:send!
    #:send
    #:process
+   #:check-connection-timeout
    #:pass-flood-gate)
   ;; server-objects.lisp
   (:export
