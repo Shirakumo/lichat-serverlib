@@ -22,14 +22,24 @@
 (defclass channel (lichat-protocol:channel timeoutable)
   ())
 
+(defun make-ring (size)
+  (let ((list (make-list size)))
+    (setf (cdr (last list)) list)))
+
+(defclass backlogged-channel (channel)
+  ((backlog :initform (make-ring 100) :accessor backlog)
+   (join-times :initform (make-hash-table :test 'eq) :accessor join-times)))
+
 (defclass user (lichat-protocol:user)
   ())
 
 (defclass connection (lichat-protocol:connection)
   ((server :initarg :server :accessor server)
-   (last-update :initform (get-universal-time) :accessor last-update))
+   (last-update :initform (get-universal-time) :accessor last-update)
+   (read-limit :initarg :read-limit :accessor read-limit))
   (:default-initargs
-   :server NIL))
+   :server NIL
+   :read-limit NIL))
 
 (defclass flood-protected-connection (connection)
   ((last-frame :initform 0 :accessor last-frame)
@@ -43,10 +53,12 @@
    (profiles :initform (make-hash-table :test 'equal) :accessor profiles)
    (channels :initform (make-hash-table :test 'equal) :accessor channels)
    (salt :initarg :salt :accessor salt)
-   (idle-timeout :initarg :idle-timeout :accessor idle-timeout))
+   (idle-timeout :initarg :idle-timeout :accessor idle-timeout)
+   (allowed-content-types :initarg :allowed-content-types :accessor allowed-content-types))
   (:default-initargs
    :salt ""
-   :idle-timeout 120))
+   :idle-timeout 120
+   :allowed-content-types NIL))
 
 (defclass flood-protected-server (server)
   ((flood-frame :initarg :flood-frame :accessor flood-frame)

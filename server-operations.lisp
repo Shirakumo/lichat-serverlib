@@ -63,6 +63,10 @@
                        :channel (lichat-protocol:name channel)
                        :id (or id (lichat-protocol:next-id))))
 
+(defmethod join :after ((channel backlogged-channel) (user user) &optional id)
+  (declare (ignore id))
+  (setf (gethash user (join-times channel)) (get-universal-time)))
+
 (defmethod leave ((channel channel) (user user) &key id (notify-self T))
   (flet ((send ()
            (send! channel 'leave :from (lichat-protocol:name user)
@@ -74,6 +78,10 @@
     (unless notify-self (send))
     (unless (lichat-protocol:users channel)
       (start-timeout channel))))
+
+(defmethod leave :after ((channel backlogged-channel) (user user) &key id notify-self)
+  (declare (ignore id notify-self))
+  (remhash user (join-times channel)))
 
 (defmethod register (registrant password server)
   (setf (find-profile registrant server)
@@ -95,7 +103,8 @@
       (reset-timeout (find-profile user server)))
     (send! connection 'connect
            :id (lichat-protocol:id update)
-           :version (lichat-protocol:protocol-version))
+           :version (lichat-protocol:protocol-version)
+           :extensions '("shirakumo-backfill" "shirakumo-data"))
     (if user-already-there
         (dolist (channel (lichat-protocol:channels user))
           (send! connection 'join :from (lichat-protocol:name user)

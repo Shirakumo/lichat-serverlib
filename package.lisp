@@ -27,10 +27,14 @@
    #:reset-timeout
    #:alive-p
    #:channel
+   #:backlogged-channel
+   #:backlog
+   #:join-times
    #:user
    #:connection
    #:server
    #:last-update
+   #:read-limit
    #:flood-protected-connection
    #:last-frame
    #:frame-count

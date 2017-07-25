@@ -59,6 +59,10 @@
 (defmethod send :before ((object lichat-protocol:wire-object) (connection connection))
   (check-connection-timeout connection))
 
+(defmethod send :after ((object lichat-protocol:update) (channel backlogged-channel))
+  (setf (car (backlog channel)) object)
+  (setf (backlog channel) (cdr (backlog channel))))
+
 (defmethod send ((object lichat-protocol:wire-object) (channel channel))
   (dolist (user (lichat-protocol:users channel))
     (send object user)))
@@ -90,7 +94,11 @@
 (defmethod process ((connection connection) (stream stream))
   (let ((message))
     (handler-case
-        (setf message (lichat-protocol:from-wire stream))
+        (setf message (lichat-protocol:from-wire stream (read-limit connection)))
+      (lichat-protocol:read-limit-hit (err)
+        (loop for char = (read-char stream NIL)
+              until (or (not char) (char= #\Nul char)))
+        (send! connection 'update-too-long))
       (lichat-protocol:wire-condition (err)
         ;; Consume until terminating Nul found or end reached.
         ;; This is to attempt to correct a malformed update and
