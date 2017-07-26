@@ -35,7 +35,6 @@
    #:server
    #:last-update
    #:read-limit
-   #:allowed-content-types
    #:flood-protected-connection
    #:last-frame
    #:frame-count
@@ -46,6 +45,8 @@
    #:channels
    #:salt
    #:idle-timeout
+   #:allowed-content-types
+   #:default-read-limit
    #:flood-protected-server
    #:flood-frame
    #:flood-limit

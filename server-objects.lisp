@@ -38,8 +38,11 @@
    (last-update :initform (get-universal-time) :accessor last-update)
    (read-limit :initarg :read-limit :accessor read-limit))
   (:default-initargs
-   :server NIL
-   :read-limit NIL))
+   :server NIL))
+
+(defmethod initialize-instance :after ((connection connection) &key server)
+  (unless (slot-boundp connection 'read-limit)
+    (setf (read-limit connection) (default-read-limit server))))
 
 (defclass flood-protected-connection (connection)
   ((last-frame :initform 0 :accessor last-frame)
@@ -54,11 +57,13 @@
    (channels :initform (make-hash-table :test 'equal) :accessor channels)
    (salt :initarg :salt :accessor salt)
    (idle-timeout :initarg :idle-timeout :accessor idle-timeout)
-   (allowed-content-types :initarg :allowed-content-types :accessor allowed-content-types))
+   (allowed-content-types :initarg :allowed-content-types :accessor allowed-content-types)
+   (default-read-limit :initarg :default-read-limit :accessor default-read-limit))
   (:default-initargs
    :salt ""
    :idle-timeout 120
-   :allowed-content-types NIL))
+   :allowed-content-types NIL
+   :default-read-limit NIL))
 
 (defclass flood-protected-server (server)
   ((flood-frame :initarg :flood-frame :accessor flood-frame)
