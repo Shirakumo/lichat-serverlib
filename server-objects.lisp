@@ -41,7 +41,11 @@
    :server NIL))
 
 (defmethod initialize-instance :after ((connection connection) &key server)
-  (unless (slot-boundp connection 'read-limit)
+  (when (and server (not (slot-boundp connection 'read-limit)))
+    (setf (read-limit connection) (default-read-limit server))))
+
+(defmethod (setf server) :after ((server server) (connection connection))
+  (when (not (slot-boundp connection 'read-limit))
     (setf (read-limit connection) (default-read-limit server))))
 
 (defclass flood-protected-connection (connection)
