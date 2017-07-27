@@ -44,7 +44,7 @@
   (when (and server (not (slot-boundp connection 'read-limit)))
     (setf (read-limit connection) (default-read-limit server))))
 
-(defmethod (setf server) :after ((server server) (connection connection))
+(defmethod (setf server) :after (server (connection connection))
   (when (not (slot-boundp connection 'read-limit))
     (setf (read-limit connection) (default-read-limit server))))
 
