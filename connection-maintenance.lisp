@@ -71,10 +71,10 @@
   (dolist (connection (lichat-protocol:connections user))
     (send object connection)))
 
-(defmethod pass-flood-gate ((connection connection))
+(defmethod pass-flood-gate ((connection connection) update)
   T)
 
-(defmethod pass-flood-gate ((connection flood-protected-connection))
+(defmethod pass-flood-gate ((connection flood-protected-connection) (update lichat-protocol:update))
   (let ((frame (floor (get-universal-time) (flood-frame (server connection)))))
     (incf (frame-count connection))
     (cond ((/= frame (last-frame connection))
@@ -83,7 +83,8 @@
            (setf (frame-count connection) 0))
           ((= (flood-limit (server connection)) (frame-count connection))
            ;; We've just reached the limit; notify the client.
-           (send! connection 'too-many-updates))
+           (send! connection 'too-many-updates :update-id (lichat-protocol:id update))
+           NIL)
           ((< (flood-limit (server connection)) (frame-count connection))
            ;; We are over the limit. Just drop the update.
            NIL)
@@ -111,7 +112,7 @@
     message))
 
 (defmethod process :around ((connection flood-protected-connection) (update lichat-protocol:update))
-  (when (pass-flood-gate connection)
+  (when (pass-flood-gate connection update)
     (call-next-method)))
 
 (defmethod process :around ((connection connection) (update lichat-protocol:update))
