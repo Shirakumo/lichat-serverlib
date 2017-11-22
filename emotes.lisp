@@ -48,11 +48,14 @@
     (stream
      (let ((buffer (make-array 4096 :element-type '(unsigned-byte 8)
                                     :adjustable T
-                                    :fill-pointer 0)))
+                                    :fill-pointer T)))
        (loop for i from 0 by 4096
-             for read = (read-sequence buffer data :start i :end (+ i 4096))
-             until (< read 4096)
-             finally (setf (fill-pointer buffer) (+ i read)))
+             for e from 4096 by 4096
+             do (setf buffer (adjust-array buffer e :fill-pointer e))
+                (let ((read (read-sequence buffer data :start i :end e)))
+                  (when (< read e)
+                    (setf (fill-pointer buffer) read)
+                    (return))))
        (coerce-emote-data buffer)))
     (pathname
      (with-open-file (stream data :direction :input
