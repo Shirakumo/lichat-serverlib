@@ -64,7 +64,7 @@
 
 (define-update-handler emotes (connection update)
   (check-from connection update)
-  (check-permitted connection update)
+  (check-permitted connection update (lichat-protocol:name (server connection)))
   (let ((needed (loop for name being the hash-keys of *emotes*
                       unless (find name (lichat-protocol:names update) :test #'string-equal)
                       collect name)))
