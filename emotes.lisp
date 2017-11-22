@@ -16,7 +16,8 @@
   (destructuring-bind (content-type data) (coerce-emote emote)
     (unless (find content-type *allowed-emote-content-types* :test #'string-equal)
       (error "The content-type ~s is not allowed for emotes." content-type))
-    (setf (gethash name *emotes*) (list content-type (coerce-emote-data data)))))
+    (etypecase data (string) (vector) (pathname))
+    (setf (gethash name *emotes*) (list content-type data))))
 
 (defun add-emote (pathname)
   (setf (emote (pathname-name pathname)) pathname))
@@ -69,8 +70,8 @@
                       unless (find name (lichat-protocol:names update) :test #'string-equal)
                       collect name)))
     (dolist (name needed)
-      (destructuring-bind (content-type payload) (emote name)
+      (destructuring-bind (content-type data) (emote name)
         (send! connection 'emote
                :name name
                :content-type content-type
-               :payload payload)))))
+               :payload (coerce-emote-data data))))))
