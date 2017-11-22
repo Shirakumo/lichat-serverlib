@@ -19,6 +19,13 @@
    #:process
    #:check-connection-timeout
    #:pass-flood-gate)
+  ;; emotes.lisp
+  (:export
+   #:*allowed-emote-content-types*
+   #:emote
+   #:add-emote
+   #:add-emotes
+   #:remove-emote)
   ;; server-objects.lisp
   (:export
    #:timeoutable

@@ -17,7 +17,9 @@
                (:file "server-operations")
                (:file "connection-maintenance")
                (:file "update-handlers")
+               (:file "emotes")
                (:file "documentation"))
   :depends-on (:lichat-protocol
                :crypto-shortcuts
+               :trivial-mimes
                :documentation-utils))

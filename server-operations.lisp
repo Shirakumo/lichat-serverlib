@@ -104,7 +104,7 @@
     (send! connection 'connect
            :id (lichat-protocol:id update)
            :version (lichat-protocol:protocol-version)
-           :extensions '("shirakumo-backfill" "shirakumo-data"))
+           :extensions '("shirakumo-backfill" "shirakumo-data" "shirakumo-emotes"))
     (if user-already-there
         (dolist (channel (lichat-protocol:channels user))
           (send! connection 'join :from (lichat-protocol:name user)
