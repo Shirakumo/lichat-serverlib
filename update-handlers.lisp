@@ -157,7 +157,13 @@
         (loop for cons on (cdr backlog)
               for update = (car cons)
               until (eq cons backlog)
-              do (when (and update (<= join-time (lichat-protocol:clock update)))
+              do (when (and update
+                            (<= join-time (lichat-protocol:clock update))
+                            ;; Ignore the initial JOIN. We can't do this by just using < on
+                            ;; the join-time/clock, as that might ignore events with the same
+                            ;; time stamp. Rare, but possible.
+                            (or (not (typep update 'lichat-protocol:join))
+                                (not (eql user (find-user (lichat-protocol:from update) (server connection))))))
                    (send update connection)))))))
 
 (define-update-handler data (connection update)
