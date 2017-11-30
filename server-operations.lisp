@@ -136,27 +136,39 @@
 (defun check-from (connection update)
   (let ((user (find-user (lichat-protocol:from update) (server connection))))
     (unless (eql user (lichat-protocol:user connection))
-      (fail! 'lichat-protocol:username-mismatch :update-id (lichat-protocol:id update)))
+      (fail! 'lichat-protocol:username-mismatch
+             :update-id (lichat-protocol:id update)
+             :text (format NIL "You are not allowed to perform actions as ~s." (lichat-protocol:from update))))
     user))
 
 (defun check-target (connection update)
   (let ((user (find-user (lichat-protocol:target update) (server connection))))
     (unless user
-      (fail! 'lichat-protocol:no-such-user :update-id (lichat-protocol:id update)))
+      (fail! 'lichat-protocol:no-such-user
+             :update-id (lichat-protocol:id update)
+             :text (format NIL "There is no user named ~s on the server." (lichat-protocol:target update))))
     user))
 
 (defun check-channel (connection update &optional (must-be-in T))
   (let ((channel (find-channel (lichat-protocol:channel update) (server connection))))
     (unless channel
-      (fail! 'lichat-protocol:no-such-channel :update-id (lichat-protocol:id update)))
+      (fail! 'lichat-protocol:no-such-channel
+             :update-id (lichat-protocol:id update)
+             :text (format NIL "There is no channel named ~s on the server." (lichat-protocol:channel update))))
     (when (and must-be-in (not (find channel (lichat-protocol:channels (lichat-protocol:user connection)))))
-      (fail! 'lichat-protocol:not-in-channel :update-id (lichat-protocol:id update)))
+      (fail! 'lichat-protocol:not-in-channel
+             :update-id (lichat-protocol:id update)
+             :text (format NIL "You are not joined to ~s and thus cannot perform this action." (lichat-protocol:channel update))))
     channel))
 
 (defun check-channelname (connection update)
   (let ((name (lichat-protocol:channel update)))
     (when name
       (unless (lichat-protocol:channelname-p name)
-        (fail! 'lichat-protocol:bad-name :update-id (lichat-protocol:id update)))
+        (fail! 'lichat-protocol:bad-name
+               :update-id (lichat-protocol:id update)
+               :text (format NIL "The name ~s is not a valid channel name." name)))
       (when (find-channel name (server connection))
-        (fail! 'lichat-protocol:channelname-taken :update-id (lichat-protocol:id update))))))
+        (fail! 'lichat-protocol:channelname-taken
+               :update-id (lichat-protocol:id update)
+               :text (format NIL "There is already a channel named ~s." name))))))
