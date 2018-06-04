@@ -55,16 +55,28 @@
 (defclass profile (lichat-protocol:profile timeoutable)
   ())
 
+(defgeneric password-valid-p (profile password))
+
+(defclass simple-profile (profile)
+  ((password :accessor password)))
+
+(defmethod initialize-instance :after ((profile simple-profile) &key password)
+  (setf (password profile) password))
+
+(defmethod (setf password) (password (profile simple-profile))
+  (setf (slot-value profile 'password) (cryptos:pbkdf2-hash (password profile) "")))
+
+(defmethod password-valid-p ((profile simple-profile) password)
+  (string= password (cryptos:pbkdf2-hash (password profile) "")))
+
 (defclass server (user)
   ((users :initform (make-hash-table :test 'equal) :accessor users)
    (profiles :initform (make-hash-table :test 'equal) :accessor profiles)
    (channels :initform (make-hash-table :test 'equal) :accessor channels)
-   (salt :initarg :salt :accessor salt)
    (idle-timeout :initarg :idle-timeout :accessor idle-timeout)
    (allowed-content-types :initarg :allowed-content-types :accessor allowed-content-types)
    (default-read-limit :initarg :default-read-limit :accessor default-read-limit))
   (:default-initargs
-   :salt ""
    :idle-timeout 120
    :allowed-content-types NIL
    :default-read-limit NIL))
@@ -137,7 +149,7 @@
   (remhash (coerce-username name) (profiles server)))
 
 (defmethod make-profile ((server server) &rest initargs)
-  (apply #'make-instance 'profile initargs))
+  (apply #'make-instance 'simple-profile initargs))
 
 (defmethod list-profiles ((server server))
   (loop for profile being the hash-values of (profiles server)

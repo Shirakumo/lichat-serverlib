@@ -23,9 +23,7 @@
            (cond ((not profile)
                   (fail!! 'lichat-protocol:no-such-profile
                           :update-id (lichat-protocol:id update)))
-                 ((string/= (cryptos:pbkdf2-hash (lichat-protocol:password update)
-                                                 (salt (server connection)))
-                            (lichat-protocol:password profile))
+                 ((not (password-valid-p profile (lichat-protocol:password update)))
                   (fail!! 'lichat-protocol:invalid-password
                           :update-id (lichat-protocol:id update)))
                  (T

@@ -84,10 +84,13 @@
   (remhash user (join-times channel)))
 
 (defmethod register (registrant password server)
-  (setf (find-profile registrant server)
-        (make-profile server
-                      :name (coerce-username registrant)
-                      :password (cryptos:pbkdf2-hash password (salt server)))))
+  (let ((profile (find-profile registrant server)))
+    (if profile
+        (setf (password profile) password)
+        (setf (find-profile registrant server)
+              (make-profile server
+                            :name (coerce-username registrant)
+                            :password password)))))
 
 (defmethod init-connection ((connection connection) update)
   (let* ((username (lichat-protocol:from update))

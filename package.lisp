@@ -50,7 +50,6 @@
    #:users
    #:profiles
    #:channels
-   #:salt
    #:idle-timeout
    #:allowed-content-types
    #:default-read-limit

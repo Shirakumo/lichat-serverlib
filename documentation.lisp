@@ -184,7 +184,6 @@ See USER
 See USERS
 See PROFILES
 See CHANNELS
-See SALT
 See IDLE-TIMEOUT")
 
   (function users
@@ -199,11 +198,6 @@ See SERVER")
 
   (function channels
     "Accessor to the hash-table of channels that exist on the server.
-
-See SERVER")
-
-  (function salt
-    "Accessor to the password hashing salt.
 
 See SERVER")
 
