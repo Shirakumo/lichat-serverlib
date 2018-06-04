@@ -133,7 +133,10 @@
         collect user))
 
 (defmethod find-profile (name (server server))
-  (let* ((name (coerce-username name))
+  (find-profile (coerce-username name) server))
+
+(defmethod find-profile ((name string) (server server))
+  (let* ((name (string-downcase name))
          (profile (gethash name (profiles server))))
     (cond ((not profile) NIL)
           ((alive-p profile)
