@@ -46,6 +46,8 @@
    #:last-frame
    #:frame-count
    #:profile
+   #:password
+   #:password-valid-p
    #:server
    #:users
    #:profiles
