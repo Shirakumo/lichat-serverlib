@@ -6,7 +6,7 @@
 
 (asdf:defsystem lichat-serverlib
   :version "1.0.0"
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "Tools to help build a server using the lichat protocol."
