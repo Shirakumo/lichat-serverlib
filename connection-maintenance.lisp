@@ -56,18 +56,18 @@
 
 ;; We handle the timeout here because the protocol specifies that the server has to
 ;; regularly send out a ping request, meaning SEND will be called regularly too.
-(defmethod send :before ((object lichat-protocol:wire-object) (connection connection))
+(defmethod send :before ((object lichat-protocol:object) (connection connection))
   (check-connection-timeout connection))
 
 (defmethod send :after ((object lichat-protocol:update) (channel backlogged-channel))
   (setf (car (backlog channel)) object)
   (setf (backlog channel) (cdr (backlog channel))))
 
-(defmethod send ((object lichat-protocol:wire-object) (channel channel))
+(defmethod send ((object lichat-protocol:object) (channel channel))
   (dolist (user (lichat-protocol:users channel))
     (send object user)))
 
-(defmethod send ((object lichat-protocol:wire-object) (user user))
+(defmethod send ((object lichat-protocol:object) (user user))
   (dolist (connection (lichat-protocol:connections user))
     (send object connection)))
 
@@ -103,7 +103,7 @@
         (send! connection 'malformed-update :text (princ-to-string err)))
       (lichat-protocol:incompatible-value-type-for-slot (err)
         (send! connection 'malformed-update :text (princ-to-string err))))
-    (when (typep message 'lichat-protocol:wire-object)
+    (when (typep message 'lichat-protocol:object)
       (process connection message))
     message))
 
